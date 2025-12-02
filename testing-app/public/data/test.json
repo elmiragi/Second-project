@@ -1,0 +1,22 @@
+[
+{
+"id": 1,
+"title": "Основы HTML",
+"description": "Проверка базовых знаний HTML.",
+"durationSec": 600,
+"passScore": 70,
+"attemptsAllowed": 3,
+"isPublished": true,
+"tags": ["html", "frontend"]
+},
+{
+"id": 2,
+"title": "CSS Базовый",
+"description": "Селекторы и базовые свойства.",
+"durationSec": 900,
+"passScore": 80,
+"attemptsAllowed": 2,
+"isPublished": true,
+"tags": ["css", "frontend"]
+}
+]

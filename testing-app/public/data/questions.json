@@ -1,0 +1,36 @@
+
+[
+{
+"id": 101,
+"testId": 1,
+"type": "single",
+"text": "Какой тег создаёт ссылку?",
+"options": ["<a>", "<link>", "<url>", "<ref>"],
+"score": 5,
+"shuffle": true
+},
+
+{
+"id": 201,
+"testId": 2,
+"type": "multiple",
+"text": "Какие свойства относятся к выравниванию текста?",
+"options": ["text-align", "justify-content", "align-items", "vertical-align"],
+"score": 5,
+"shuffle": true
+},
+{
+"id": 102,
+"testId": 3,
+"type": "single",
+"text": "Что делает тег <title>?",
+"options": [
+"Подзаголовок страницы",
+"Заголовок вкладки браузера",
+"Новый раздел",
+"Описание сайта"
+],
+"score": 5,
+"shuffle": false
+}
+]
