@@ -5,6 +5,7 @@ export default function StudentsTest() {
         {id:1, name: 'js'},
         {id:2, name: 'react'},
         {id:3, name: 'python'},
+        {id:4, name: 'css'},
     ];
     return (
         <ul>

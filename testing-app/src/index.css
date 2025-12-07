@@ -6,8 +6,12 @@
 
 body{
   font-family:'Times New Roman', Times, serif;
-  background-color: #f5f5f5;
+  background-color: #fbfbfb;
 } 
+
+footer{
+  background-color: #fbfbfb;
+}
 
 .active {
   color: 'red';

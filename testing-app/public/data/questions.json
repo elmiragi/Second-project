@@ -20,6 +20,14 @@
 "shuffle": true
 },
 {
+"id": 201,
+"testId": 4,
+"type": "text",
+"text": "Какие свойства относятся к выравниванию текста?",
+"score": 5,
+"shuffle": true
+},
+{
 "id": 102,
 "testId": 3,
 "type": "single",

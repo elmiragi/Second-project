@@ -1,16 +1,10 @@
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom"
-
-
+import { useParams } from "react-router-dom";
 
 const QuestionsContainer = styled.div`
   padding: 20px;
 `;
-
-// const ErrorText = styled.h3`
-//   color: red;
-// `;
 
 const QuestionNumber = styled.h4`
   background: white;
@@ -19,10 +13,6 @@ const QuestionNumber = styled.h4`
   padding: 15px;
 `;
 
-// const QuestionBlock = styled.li` 
-//   color: #272829ff;
-//   margin: 10px;
-// `;
 const TextBlock = styled.div`
   color: #272829ff;
 `;
@@ -32,7 +22,6 @@ const Upload = styled.div`
   align-items: center;
   justify-content: center;
 `;
-
 
 const OptionCard = styled.li`
   border: 1px solid #f0f0f0ff;
@@ -59,78 +48,114 @@ const OptionLabel = styled.label`
   }
 `;
 
-
+const TextAnswer = styled.input`
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  outline: none;
+  box-sizing: border-box;
+  font-size: 14px;
+  &:focus {
+    border-color: #0e8e86;
+    box-shadow: 0 0 0 3px rgba(14, 142, 134, 0.12);
+  }
+`;
 
 export default function StudentTestPage() {
-    const params = useParams();
-    const [isLoading, setIsLoading] = useState(true);
-    const [questions, setQuestions] = useState<any[]>([]);
-    const [error, setError] = useState<string>("");
+  const params = useParams();
+  const [isLoading, setIsLoading] = useState(true);
+  const [questions, setQuestions] = useState<any[]>([]);
+  const [error, setError] = useState<string>("");
 
-    console.log('params----', params.id)
-    const testId = Number(params.id);
-    const filteredQuestions = questions.filter(q => q.testId===testId)
-    const data = '/public/data/questions.json';
-    console.log(filteredQuestions);
-    useEffect(() => {
-        fetch(data)
-            .then(res => {
-                if (!res.ok) throw new Error(`HTTP${res.status}`);
-                    return res.json()})
-            .then(data => {
-                setQuestions(data)})
-            .finally(() => setIsLoading(false))
-            .catch((err) => {
-                setError(err.message);});
+  console.log("params----", params.id);
+  const testId = Number(params.id);
+  //const filteredQuestions = questions.filter(q => q.testId===testId);
+  //console.log(filteredQuestions);
 
-  }, []);
-    if (Number.isNaN(testId)) return <div>Неверный ID</div>;
-    if (isLoading) return <Upload className="custom-loader"></Upload>;
-    if (error) return <p style={{ color: "red" }}>Ошибка: {error}</p>;
-    if (filteredQuestions.length === 0) return <div>В текущий момент тесты отсутствуют...</div>;
+  useEffect(() => {
+    const data = "/public/data/questions.json";
+    let ignore = false;
+    fetch(data)
+      .then((res) => {
+        if (!res.ok) throw new Error(`HTTP${res.status}`);
+        return res.json();
+      })
+      .then((data) => {
+        if (ignore) return;
+        const filteredQuestions = data.filter((q) => q.testId === testId);
+        setQuestions(filteredQuestions);
+      })
+      .catch((err) => {
+        if (ignore) return;
+        setError(err.message);
+      })
+      .finally(() => setIsLoading(false));
 
-    return (
-        <section>
-            {/* {isLoading && <Upload className="custom-loader"></Upload>}
-            {error && <ErrorText>{error}</ErrorText>} */}
-            {/* {!error && ( */}
-            
-                
-            <QuestionsContainer>
-                <TextBlock><h2>Информация о студенте</h2>
-                <h4>Студент №{params.id}</h4></TextBlock>
- 
-                {filteredQuestions.map((q) => 
-                    <OptionCard key={q.id}>
-                        <QuestionNumber>{q.text}</QuestionNumber>
-                        {q.type === "multiple" && (
-                            <OptionList>
-                                {(q.options ?? []).map((opt, i) => (
-                                <li key={i}>
-                                    <OptionLabel>
-                                    <input id={i} type="checkbox"/>
-                                    <span>{opt}</span>
-                                    </OptionLabel>
-                                </li>
-                                ))}
-                            </OptionList>
-                            )}
+    return () => {
+      ignore = true;
+    };
+  }, [testId]);
 
-                        {q.type === "single" && (
-                            <OptionList>
-                                {(q.options ?? []).map((opt, i) => (
-                                <li key={i}>
-                                    <OptionLabel>
-                                    <input id={`q-${q.id}-${i}`} type="radio" name={`q-${q.id}`} aria-label={`Option ${i} q - ${q.id}`} />
-                                    <span>{opt}</span>
-                                    </OptionLabel>
-                                </li>
-                                ))}
-                            </OptionList>
-                            )}
+  if (Number.isNaN(testId)) return <div>Неверный ID</div>;
+  if (isLoading) return <Upload className="custom-loader"></Upload>;
+  if (error) return <p style={{ color: "red" }}>Ошибка: {error}</p>;
+  if (questions.length === 0)
+    return <div>В текущий момент тесты отсутствуют...</div>;
 
-                    </OptionCard>
+  return (
+    <section>
+      <QuestionsContainer>
+        <TextBlock>
+          <h2>Информация о студенте</h2>
+          <h4>Студент №{params.id}</h4>
+        </TextBlock>
+
+        {questions.map((q) => (
+          <OptionCard key={q.id}>
+            <QuestionNumber>{q.text}</QuestionNumber>
+            {q.type === "multiple" && (
+              <OptionList>
+                {(q.options ?? []).map((opt, i) => (
+                  <li key={i}>
+                    <OptionLabel>
+                      <input id={i} type="checkbox" />
+                      <span>{opt}</span>
+                    </OptionLabel>
+                  </li>
+                ))}
+              </OptionList>
             )}
-            </QuestionsContainer>
-        </section>
-)};
+
+            {q.type === "single" && (
+              <OptionList>
+                {(q.options ?? []).map((opt, i) => (
+                  <li key={i}>
+                    <OptionLabel>
+                      <input
+                        id={`q-${q.id}-${i}`}
+                        type="radio"
+                        name={`q-${q.id}`}
+                        aria-label={`Option ${i} q - ${q.id}`}
+                      />
+                      <span>{opt}</span>
+                    </OptionLabel>
+                  </li>
+                ))}
+              </OptionList>
+            )}
+            {q.type === "text" && (
+              <div style={{ marginTop: 8 }}>
+                <TextAnswer
+                  type="text"
+                  placeholder="Ваш ответ..."
+                  aria-label={`Ответ на вопрос ${q.id}`}
+                />
+              </div>
+            )}
+          </OptionCard>
+        ))}
+      </QuestionsContainer>
+    </section>
+  );
+}
