@@ -145,13 +145,13 @@ export default function StudentTestPage() {
               </OptionList>
             )}
             {q.type === "text" && (
-              <div style={{ marginTop: 8 }}>
+              <OptionList style={{ marginTop: 8 }}>
                 <TextAnswer
                   type="text"
                   placeholder="Ваш ответ..."
                   aria-label={`Ответ на вопрос ${q.id}`}
                 />
-              </div>
+              </OptionList>
             )}
           </OptionCard>
         ))}
