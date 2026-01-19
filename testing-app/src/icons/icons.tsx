@@ -61,3 +61,26 @@ export function LinkIcon() {
   )
 
 }
+export function DoneIcon() {
+  return (
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M6 12L10.2426 16.2426L18.727 7.75732" stroke="#0E73F6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+)}
+
+export function CloseIcon() {
+  return (
+<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M13.3336 13.3332L10.0003 9.99985M10.0003 9.99985L6.66699 6.6665M10.0003 9.99985L13.3337 6.6665M10.0003 9.99985L6.66699 13.3332" stroke="#0E73F6" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+)}
+
+export function SearchIcon() {
+  return (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M15 15L21 21M10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10C17 13.866 13.866 17 10 17Z" stroke="#09090B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
+
+  );
+}
+

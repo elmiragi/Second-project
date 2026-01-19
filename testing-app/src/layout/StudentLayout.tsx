@@ -12,7 +12,6 @@ const MainBox = styled.div`
 
 const Aside = styled.aside`
   border-radius: ${(p) => p.theme.radius.md};
-  border: 1px solid red
   padding: 30px 16px 25px;
 `;
 

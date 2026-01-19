@@ -1,10 +1,13 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { LinkIcon } from "../../icons/icons";
 import styled from "@emotion/styled";
+import { Modal } from "../../components/modal";
+import { ChangeModalPass } from "../../components/changeModalPass";
+import { Toast } from "../../components/UI/Toast";
 
 const Wrapper = styled.div`
   display: grid;
-  grid-template-column: 346px 1fr;
+  grid-template-columns: 346px 1fr;
   gap: 30px;
 `;
 
@@ -29,8 +32,8 @@ const AvatarBox = styled.div`
 `;
 
 const AvatarImg = styled.img`
-  max-width: 100px;
-  max-height: 100px;
+  max-width: 100%;
+  max-height: 100%;
   border-radius: 10px;
 `;
 
@@ -64,7 +67,7 @@ const Project = styled.span`
 const Groups = styled.div`
   display: grid;
   gap: 6px;
-  margin-bottom: 18px;
+  margin-bottom: 50px;
 `;
 
 const MainProfileBox = styled.div`
@@ -75,8 +78,13 @@ const MainProfileBox = styled.div`
 
 const GroupElements = styled.span`
   background-color: #f4f6f8ff;
-  padding: 3px;
+  padding: 8px;
   border-radius: 5px;
+`;
+
+const Actions = styled.div`
+  display: flex;
+  gap: 25px;
 `;
 
 const GroupLine = styled.div`
@@ -91,10 +99,26 @@ const GroupLine = styled.div`
     color: #101828;
   }
   .course {
-    color: #667085;
+    color: #101828;
   }
   .vector {
-    color: #667085;
+    color: #101828;
+  }
+`;
+
+const StyledButton = styled.button`
+  background-color: #fff;
+  border: 1px solid #dde2e4;
+  color: #09090b;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 24px;
+  padding: 10px 30px;
+  border-radius: 6px;
+  transition: 0.3s ease;
+  cursor: pointer;
+  &:hover {
+    background-color: #f5f5f5;
   }
 `;
 
@@ -119,9 +143,21 @@ export function StudentProfilePage() {
       "https://avatars.mds.yandex.net/i?id=9199cdc121b8c72abdd105624ef6f51a20164676-5233567-images-thumbs&n=13",
     socialLink: { url: "https://vk.com/id759401549", label: "vk.com_id123" },
     label: "КОД",
-    tags: [{ group: "кд18", course: "2 course", vector: "frontend" }],
+    tags: [{ group: "кф1", course: "3 course", vector: "frontend" }],
   };
   const [profile, SetProfile] = useState<ProfileData>(data);
+  const fileRef = useRef<HTMLInputElement | null>(null);
+  const [isOpenPass, setIsOpenPass] = useState(false);
+  const [isOpenToast, setIsOpenToast] = useState(true);
+
+  function handleChangeFoto() {
+    console.log("Поменять фото");
+  }
+
+  function handleChangePassword() {
+    console.log("Поменять пароль");
+    setIsOpenPass(true);
+  }
 
   return (
     <MainProfileBox>
@@ -152,8 +188,59 @@ export function StudentProfilePage() {
                 </GroupLine>
               ))}
             </Groups>
+            <Actions>
+              <StyledButton onClick={() => fileRef.current?.click()}>
+                Поменять фото
+              </StyledButton>
+              <StyledButton onClick={() => handleChangePassword()}>
+                Поменять пароль
+              </StyledButton>
+              {/* <input ref={fileRef} type="file" style={{ display: "none" }} /> */}
+              {/* <StyledButton>Поменять пароль</StyledButton> */}
+            </Actions>
+            <ChangeModalPass
+              onSuccess={() => setIsOpenToast(true)}
+              open={isOpenPass}
+              onClose={() => setIsOpenPass(true)}
+            />
+            <Toast
+              message="Сохранения изменены"
+              open={isOpenToast}
+              onClose={() => setIsOpenToast(false)}
+            />
           </InfoCol>
         </div>
+
+        {/* {isOpenPass && (
+          <Modal
+            onClose={() => setIsOpenPass(false)}
+            open={isOpenPass}
+            title="Сменить пароль"
+          >
+            <div>
+              <label>
+                Новый пароль
+                <StyledInput
+                  type="text"
+                  placeholder="Введите новый пароль..."
+                />
+              </label>
+            </div>
+
+            <div>
+              <label>
+                Повторите пароль
+                <StyledInput type="text" placeholder="Повторите пароль..." />
+              </label>
+            </div>
+            <ContainerButton>
+              <CancelButton>Отменить</CancelButton>
+              <SaveButton>Подтвердить</SaveButton>
+            </ContainerButton>
+          </Modal>
+        )} */}
+
+        <ChangeModalPass open={isOpenPass} onClose={setIsOpenPass} />
       </Wrapper>
     </MainProfileBox>
   );
