@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import styled from "@emotion/styled";
-import { SearchIcon } from "../../icons/icons";
+import { ExitIcon, SearchIcon } from "../../icons/icons";
 
 const Header = styled.header`
   display: flex;
@@ -14,7 +15,18 @@ const Header = styled.header`
 const Left = styled.div`
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
+`;
+
+const BackLink = styled(Link)`
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: #f4f9ff;
+  color: #0e73f6;
+  text-decoration: none;
 `;
 
 const Title = styled.h1`
@@ -40,7 +52,7 @@ const SearchButton = styled.button`
   border-radius: 15px;
   transition: background 0.2s ease;
   &:hover {
-    background: rgba(221, 228, 243, 1);
+    background: #f5f7fb;
   }
 `;
 
@@ -116,6 +128,11 @@ export default function StudentHeader(props: StudentHeaderProps) {
   return (
     <Header>
       <Left>
+        {props.backTo ? (
+          <BackLink to={props.backTo} aria-label="Назад">
+            <ExitIcon />
+          </BackLink>
+        ) : null}
         <Title>{title}</Title>
       </Left>
 
@@ -131,11 +148,7 @@ export default function StudentHeader(props: StudentHeaderProps) {
               onKeyDown={onKeyDown}
             />
           ) : (
-            <SearchButton
-              aria-label="Поиск"
-              title="Открыть поиск"
-              onClick={() => setSearchOpen(true)}
-            >
+            <SearchButton aria-label="Поиск" title="Открыть поиск" onClick={() => setSearchOpen(true)}>
               <SearchIcon />
             </SearchButton>
           ))}

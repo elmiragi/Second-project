@@ -18,5 +18,15 @@
 "attemptsAllowed": 2,
 "isPublished": true,
 "tags": ["css", "frontend"]
+},
+{
+"id": 3,
+"title": "JS Продвинутый",
+"description": "Javascript.",
+"durationSec": 900,
+"passScore": 80,
+"attemptsAllowed": 2,
+"isPublished": true,
+"tags": ["js", "frontend"]
 }
 ]

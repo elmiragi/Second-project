@@ -8,5 +8,25 @@
 "timeSpent": 600,
 "score": 85,
 "status": "graded"
+},
+{
+"id": 5002,
+"testId": 2,
+"userId": 1,
+"startedAt": "2025-10-01T14:11:11Z",
+"finishedAt": "2025-12-01T14:44:44Z",
+"timeSpent": 900,
+"score": 75,
+"status": "graded"
+},
+{
+"id": 5003,
+"testId": 3,
+"userId": 1,
+"startedAt": "2025-10-01T14:55:55Z",
+"finishedAt": "2025-12-01T14:55:59Z",
+"timeSpent": 1200,
+"score": 62,
+"status": "graded"
 }
 ]

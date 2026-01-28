@@ -10,7 +10,7 @@ export default function StudentsTest() {
     ];
     return (
         <div>
-            <StudentHeader title="Тестирования" />
+            <StudentHeader title="Тестирования" backTo="/student" />
             <ul>
                 {students.map(s => (
                     <li key={s.id}>

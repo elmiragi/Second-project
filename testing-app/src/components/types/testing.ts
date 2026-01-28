@@ -4,6 +4,8 @@ export type Attempt = {
     userId: number;
     score: number;
     status: "submitted" | "graded" | "in-progress";
+    finishedAt?: string | null;
+    timeSpent?: number | null;
 }
 export type TestMeta = {
     project: string;
@@ -18,6 +20,7 @@ export type TestItem = {
     description: string;
     repeatIsAllowed: boolean;
     passingScore: number;
-    meta: TestMeta[];
+    tags: string[];
+    meta: TestMeta;
     attempts: Attempt[];
 }
