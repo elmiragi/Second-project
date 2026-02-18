@@ -2,7 +2,7 @@
 // import StudentHeader from "../../components/student/StudentHeader";
 import styled from "@emotion/styled";
 import QuestionBlock from "../../components/tests/QuestionsBlock";
-import { useParams, useLocation, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { TestHeader } from "../../components/tests/TestHeader";
 import { useEffect, useMemo, useState } from "react";
 import type { Question, TestItem } from "../../components/types/testing";
@@ -24,15 +24,18 @@ const OptionList = styled.ul`
   list-style: none;
 `;
 
-const SubBtn = styled.li`
-  list-style: none;
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin: 0 20px 20px;
-`;
+type AnswerValueType = {
+  value: string | string[] | null;
+};
 
-export default function StudentsTest() {
+type AnswerValue = {
+  type: "multiple" | "single" | "text";
+  value: AnswerValueType;
+};
+
+type AnswerState = Record<number, AnswerValue>;
+
+export default function StudentRunTest() {
   const params = useParams<{ id?: string; testId?: string }>();
   //   const parsed = Number(params.id ?? params.testId);
   //   const testId = Number.isNaN(parsed) ? undefined : parsed;
@@ -40,19 +43,15 @@ export default function StudentsTest() {
   const title = testId ? `Тестирование №${testId}` : `Тестирование`;
   const [testData, setTestData] = useState<TestItem | null>(null);
   const [allQuestions, setAllQuestions] = useState<Question[]>([]);
-  //   const [questions, setQuestions] = useState<Question[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const passDuration = Number(location.state?.durationSec) || undefined;
-  //   const durationSeconds = testData?.durationSec;
-  const [seconds, setSeconds] = useState<number | undefined>(passDuration);
-  const [answers, setAnswers] = useState<Record<number, string | string[]>>({});
+  const durationSeconds = testData?.durationSec;
+  const [seconds, setSeconds] = useState(durationSeconds);
+  const [answer, setAnswer] = useState<AnswerState>({});
 
   //   const location = useLocation();
   //   console.log(location.state.durationSec);
+  //   const [time, setTime] = useState(durationSeconds);
 
   useEffect(() => {
     const data = "/data/tests.json";
@@ -95,38 +94,30 @@ export default function StudentsTest() {
     [testId, allQuestions],
   );
 
+  // useEffect(() => {
+  //   setAnswer(prev => {
+  //     if (Object.keys(prev).length > 0) return prev;
+  //     const ansInitial: AnswerState = {};
+  //     for (const q of filteredQuestions) {
+  //       ansInitial[q.id] = { type: q.type, value: q.type === "multiple" ? [] : null, };
+  //     }
+  //     return ansInitial;
+  //   });
+  // }, [filteredQuestions]);
+
   useEffect(() => {
-    if (passDuration) return;
-    if (testData?.durationSec) setSeconds(testData.durationSec);
-  }, [testData, passDuration]);
-
-  function handleAnswer(id: number, value: string | string[] | null) {
-    setAnswers((prev) => ({
-      ...prev,
-      [id]: value ?? (Array.isArray(value) ? [] : ""),
-    }));
-  }
-
-  function isQuestionAnswered(q: Question) {
-    const value = answers[q.id];
-    if (q.type === "text")
-      return typeof value === "string" && value.trim() !== "";
-    if (q.type === "single") return typeof value === "string" && value !== "";
-    if (q.type === "multiple") return Array.isArray(value) && value.length > 0;
-    return false;
-  }
-
-  const allAnswered = filteredQuestions.every((q) => isQuestionAnswered(q));
-
-  function handleSubmit() {
-    const payload = {
-      testId,
-      answers,
-      time: seconds ?? null,
-    };
-    console.log("Отправка теста", payload);
-    navigate("/student/tests");
-  }
+    setAnswer((prev) => {
+      if (Object.keys(prev).length > 0) return prev;
+      const answInitial: AnswerState = {};
+      for (const q of filteredQuestions) {
+        answInitial[q.id] = {
+          type: q.type,
+          value: q.type === "multiple" ? [] : null,
+        };
+      }
+      return answInitial;
+    });
+  }, [filteredQuestions]);
 
   if (Number.isNaN(testId)) {
     return (
@@ -163,6 +154,25 @@ export default function StudentsTest() {
       </section>
     );
 
+  // function onChange(questionId: number, value: AnswerValueType) {
+  //   console.log("onChange", questionId, value);
+  //   setAnswer((prev) => ({
+  //     ...prev,
+  //     [questionId]: { ...prev[questionId], value },
+  //   }));
+  // }
+
+  function onChange(questionId: number, value: AnswerValueType) {
+    console.log("onChange", questionId, value);
+    setAnswer((prev) => ({
+      ...prev,
+      [questionId]: {
+        ...prev[questionId],
+        value,
+      },
+    }));
+  }
+
   return (
     <>
       <TestHeader title={title} />
@@ -172,25 +182,17 @@ export default function StudentsTest() {
             <QuestionBlock
               key={q.id}
               question={q}
-              value={answers[q.id] ?? null}
-              onChange={handleAnswer}
+              value={answer}
+              onChange={onChange}
             />
           ))}
-          <SubBtn>
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={!allAnswered}
-            >
-              Отправить тест
-            </button>
-          </SubBtn>
         </OptionList>
-        <div>
-          {typeof seconds === "number" && (
-            <TimerBox duration={seconds} onFinished={handleSubmit} />
-          )}
-        </div>
+        {seconds && (
+          <TimerBox
+            duration={seconds}
+            onFinished={() => console.log("Timer finished!")}
+          />
+        )}
       </Layout>
     </>
   );

@@ -1,13 +1,19 @@
-import { useMemo, useState } from "react";
 import type { Attempt, TestItem } from "../types/testing";
 import styled from "@emotion/styled";
-import { CalendarIcon, TimeIcon } from "../../icons/icons";
+import {
+  CalendarIcon,
+  DoneOutlineIcon,
+  RetryIcon,
+  TimeIcon,
+} from "../../icons/icons";
+import { useNavigate } from "react-router-dom";
 
 const Card = styled.article`
   border: 1px solid #dde2e4;
   border-radius: 12px;
   padding: 34px 16px 15px 22px;
   position: relative;
+  background-color: #fff;
 `;
 
 const TitleCard = styled.h4`
@@ -27,24 +33,25 @@ const CardText = styled.p`
 
 const Tag = styled.div`
   display: flex;
-  font-size: 24px;
+  font-size: 14px;
   font-weight: 400;
   line-height: 1;
   color: #0e73f6;
   padding: 7px 12px;
-  margin: 5px;
+  margin: 5px 5px 5px 0px;
   border: 1px solid #0e73f680;
   border-radius: 10px;
 `;
 
 const Tags = styled.div`
   display: flex;
-  font-size: 24px;
+  font-size: 4px;
   font-weight: 400;
   line-height: 1;
   color: #0e73f6;
-  padding: 7px; 12px;
-  // border: 1px solid #0e73f680;
+  padding: 0;
+  gap: 8px;
+  /* border: 1px solid #0e73f680; */
   flex-flow: row nowrap;
   border-radius: 10px;
   justify-content: flex-start;
@@ -52,33 +59,34 @@ const Tags = styled.div`
 
 const Times = styled.span`
   display: flex;
-  gap: 5px;
-  margin-bottom: center;
+  gap: 12px;
+  margin-bottom: 12px;
+  align-items: center;
 `;
 
 const Calendar = styled.span`
-display: flex;
-align-items: center;
-gap: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
   font-size: 12px;
   font-weight: 400;
   line-height: 1;
-  color: #ffffffff;
-  padding: 7px; 12px;
+  color: #ffffff;
+  padding: 7px 12px;
   border: 1px solid #ffa528;
   background-color: #ffa528;
   border-radius: 10px;
 `;
 
 const Time = styled.span`
-display: flex;
-align-items: center;
-gap: 5px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
   font-size: 12px;
   font-weight: 400;
   line-height: 1;
   color: #0e73f6;
-  padding: 7px; 12px;
+  padding: 7px 12px;
   border: 1px solid #f4f9ff;
   background-color: #f4f9ff;
   border-radius: 10px;
@@ -109,12 +117,102 @@ const ScoreMax = styled.span`
   color: #0e73f6;
 `;
 
+// const RetryBtn = styled.button`
+//   color: #fff;
+//   line=hight: 1.71;
+//   font-size: 14px;
+//   font-weight: 600;
+//   padding: 7 px 20px;
+//   min-width: 122px;
+//   border-radius: 10px;
+//   cursor: pointer;
+
+//   background: #0e73f6;
+//   border: 1px solid #0e73f6;
+// `;
+
+// const DoneBtn = styled.button`
+//   color: #fff;
+//   line=hight: 1.71;
+//   font-size: 14px;
+//   font-weight: 600;
+//   padding: 7 px 20px;
+//   min-width: 122px;
+//   border-radius: 10px;
+//   cursor: pointer;
+
+//   background: #0e73f6;
+//   border: 1px solid #0e73f6;
+// `;
+
+// const StartBtn = styled.button`
+//   color: #fff;
+//   line=hight: 1.71;
+//   font-size: 14px;
+//   font-weight: 600;
+//   padding: 7 px 20px;
+//   min-width: 122px;
+//   border-radius: 10px;
+//   cursor: pointer;
+
+//   background: #0e73f6;
+//   border: 1px solid #0e73f6;
+// `;
+
+const BlockBtn = styled.span`
+  display: flex;
+  justify-content: flex-end;
+`;
+
+const BaseButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.71;
+  font-weight: 600;
+  padding: 7px 20px;
+  min-width: 122px;
+  border-radius: 10px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+`;
+
+export const DoneBtn = styled(BaseButton)`
+  background-color: #00c63f;
+  border-color: #00c63f;
+`;
+
+export const StartBtn = styled(BaseButton)`
+  display: flex;
+  justify-content: center;
+  background-color: #0e73f6;
+  border-color: #0e73f6;
+`;
+
+export const RetryBtn = styled(BaseButton)`
+  background-color: #fff;
+  border-color: #dde2e4;
+  color: #09090b;
+`;
+
 type TestCardProps = {
   test: TestItem;
   lastAttempt?: Attempt | null;
 };
 export function TestCard(props: TestCardProps) {
-  //   const [count, setCount] = useState(0);
+  const navigate = useNavigate();
   const { test, lastAttempt } = props;
 
   // const numbers = useMemo(() => [22,33,44], []);
@@ -129,32 +227,69 @@ export function TestCard(props: TestCardProps) {
   function formateDate(date?: string | null): string | null {
     if (!date) return null;
     const d = new Date(date);
-    return d.toLocaleDateString("ru-Ru");
+    return d.toLocaleDateString("ru-RU");
   }
-  function formateMinutes(seconds?: number | null): string | null {
+  // function formateMinutes(seconds?: number | null): string | null {
+  //   if (!seconds) return null;
+  //   const m = Math.round(seconds / 60);
+  //   return `${m} минут`;
+  // }
+
+  function formatMinutes(seconds?: number | null): string | null {
     if (!seconds) return null;
-    const m = Math.round(seconds / 60);
-    return `${m} минут`;
+
+    const minutes = Math.round(seconds / 60);
+
+    let wordForm = "минут";
+
+    const lastDigit = minutes % 10;
+    const lastTwoDigits = minutes % 100;
+
+    if (lastDigit === 1 && lastTwoDigits !== 11) {
+      wordForm = "минута";
+    } else if (
+      lastDigit >= 2 &&
+      lastDigit <= 4 &&
+      (lastTwoDigits < 12 || lastTwoDigits > 14)
+    ) {
+      wordForm = "минуты";
+    }
+
+    return `${minutes} ${wordForm}`;
   }
 
-  const isGraded = lastAttempt?.status === 'graded'
-  // if(isGraded)
-
+  const isGraded = lastAttempt?.status === "graded";
   const scoreText =
     lastAttempt?.status === "graded" ? lastAttempt?.score / 10 : null;
+  const deadline = formateDate(
+    test.deadlineISO || lastAttempt?.finishedAt || null,
+  );
+  const duration = formatMinutes(test.durationSec || null);
 
-  const deadline = formateDate(lastAttempt?.finishedAt);
-  const duration = formateMinutes(lastAttempt?.timeSpent);
+  function actionBtn() {
+    if (isGraded && test.allowRetry)
+      return { status: "retry", label: "Пройти заново" };
+    if (isGraded && !test.allowRetry)
+      return { status: "done", label: "Выполнено" };
+    return { status: "start", label: "Пройти" };
+  }
 
+  function handleClick() {
+    if (actionBtn().status === "done") return;
+    if (!test.durationSec) return;
+    navigate(`/student/test/${test.id}`, { state: { durationSec: test.durationSec } });
+  }
+
+  console.log(actionBtn());
   return (
     <Card>
       <TitleCard>{test.title}</TitleCard>
       <CardText>{test.description}</CardText>
 
       <Tags>
-          {test.tags?.map((tag, i) => (
-            <Tag key={String(i)}>{tag}</Tag>
-          ))}
+        {test.tags?.map((tag, i) => (
+          <Tag key={String(i)}>{tag}</Tag>
+        ))}
       </Tags>
       <Times>
         {!!deadline && (
@@ -171,7 +306,21 @@ export function TestCard(props: TestCardProps) {
         )}
       </Times>
 
-<button></button>
+      <BlockBtn>
+        {actionBtn().status === "done" && (
+          <DoneBtn disabled>
+            {actionBtn().label} <DoneOutlineIcon />
+          </DoneBtn>
+        )}
+        {actionBtn().status === "retry" && (
+          <RetryBtn>
+            {actionBtn().label} <RetryIcon />
+          </RetryBtn>
+        )}
+        {actionBtn().status === "start" && (
+          <StartBtn onClick={() => handleClick()}>{actionBtn().label}</StartBtn>
+        )}
+      </BlockBtn>
 
       {scoreText && (
         <ScoreData>
@@ -183,5 +332,5 @@ export function TestCard(props: TestCardProps) {
   );
 }
 {
-  /* <button onClick={() => setCount(count + 1)}>+++</button> */
+  // /* <button onClick={() => setCount(count + 1)}>+++</button> */
 }

@@ -43,71 +43,192 @@ export function ProfileIcon() {
 
 export function LinkIcon() {
   return (
-      <svg
-    width="18"
-    height="18"
-    viewBox="0 0 18 18"
-    fill="none"
-    xmlns="http://www.w3.org/2000/svg"
-  >
-    <path
-      d="M5.70696 11.3644L11.3638 5.70757M3.58601 7.82866L2.1718 9.24287C0.609702 10.805 0.609249 13.3378 2.17135 14.8999C3.73344 16.462 6.26686 16.4616 7.82896 14.8995L9.24166 13.4854M7.82805 3.58565L9.24226 2.17143C10.8044 0.609336 13.3367 0.609615 14.8988 2.17171C16.4609 3.73381 16.4608 6.26649 14.8987 7.82859L13.4853 9.24276"
-      stroke="currentColor"
-      stroke-width="1.5"
-      stroke-linecap="round"
-      stroke-linejoin="round"
-    />
-  </svg>
-  )
-
+    <svg
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M5.70696 11.3644L11.3638 5.70757M3.58601 7.82866L2.1718 9.24287C0.609702 10.805 0.609249 13.3378 2.17135 14.8999C3.73344 16.462 6.26686 16.4616 7.82896 14.8995L9.24166 13.4854M7.82805 3.58565L9.24226 2.17143C10.8044 0.609336 13.3367 0.609615 14.8988 2.17171C16.4609 3.73381 16.4608 6.26649 14.8987 7.82859L13.4853 9.24276"
+        stroke="currentColor"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
 }
-export function DoneIcon() {
+export function DoneOutlineIcon() {
   return (
-<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M6 12L10.2426 16.2426L18.727 7.75732" stroke="#0E73F6" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-)}
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M4 7.99984L6.82843 10.8283L12.4847 5.17139"
+        stroke="white"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+}
 
 export function CloseIcon() {
   return (
-<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M13.3336 13.3332L10.0003 9.99985M10.0003 9.99985L6.66699 6.6665M10.0003 9.99985L13.3337 6.6665M10.0003 9.99985L6.66699 13.3332" stroke="#0E73F6" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-)}
+    <svg
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M13.3336 13.3332L10.0003 9.99985M10.0003 9.99985L6.66699 6.6665M10.0003 9.99985L13.3337 6.6665M10.0003 9.99985L6.66699 13.3332"
+        stroke="#0E73F6"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+}
 
 export function SearchIcon() {
   return (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M15 15L21 21M10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10C17 13.866 13.866 17 10 17Z" stroke="#09090B" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-
+    <svg
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M15 15L21 21M10 17C6.13401 17 3 13.866 3 10C3 6.13401 6.13401 3 10 3C13.866 3 17 6.13401 17 10C17 13.866 13.866 17 10 17Z"
+        stroke="#09090B"
+        stroke-width="1.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
   );
 }
 
 export function CalendarIcon() {
   return (
-    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M2.66675 5.33334H13.3334M2.66675 5.33334V11.2001C2.66675 11.9469 2.66675 12.3201 2.81207 12.6053C2.9399 12.8561 3.14373 13.0603 3.39461 13.1882C3.67955 13.3333 4.05274 13.3333 4.79802 13.3333H11.2021C11.9474 13.3333 12.3201 13.3333 12.605 13.1882C12.8559 13.0603 13.0604 12.8561 13.1882 12.6053C13.3334 12.3203 13.3334 11.9477 13.3334 11.2024V5.33334M2.66675 5.33334V4.80014C2.66675 4.0534 2.66675 3.67976 2.81207 3.39454C2.9399 3.14366 3.14373 2.93983 3.39461 2.812C3.67983 2.66668 4.05347 2.66668 4.80021 2.66668H5.33341M13.3334 5.33334V4.79795C13.3334 4.05267 13.3334 3.67948 13.1882 3.39454C13.0604 3.14366 12.8559 2.93983 12.605 2.812C12.3198 2.66668 11.9469 2.66668 11.2002 2.66668H10.6667M5.33341 2.66668H10.6667M5.33341 2.66668V1.33334M10.6667 2.66668V1.33334M10.0001 8.00001L7.33341 10.6667L6.00008 9.33334" stroke="white" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M2.66675 5.33334H13.3334M2.66675 5.33334V11.2001C2.66675 11.9469 2.66675 12.3201 2.81207 12.6053C2.9399 12.8561 3.14373 13.0603 3.39461 13.1882C3.67955 13.3333 4.05274 13.3333 4.79802 13.3333H11.2021C11.9474 13.3333 12.3201 13.3333 12.605 13.1882C12.8559 13.0603 13.0604 12.8561 13.1882 12.6053C13.3334 12.3203 13.3334 11.9477 13.3334 11.2024V5.33334M2.66675 5.33334V4.80014C2.66675 4.0534 2.66675 3.67976 2.81207 3.39454C2.9399 3.14366 3.14373 2.93983 3.39461 2.812C3.67983 2.66668 4.05347 2.66668 4.80021 2.66668H5.33341M13.3334 5.33334V4.79795C13.3334 4.05267 13.3334 3.67948 13.1882 3.39454C13.0604 3.14366 12.8559 2.93983 12.605 2.812C12.3198 2.66668 11.9469 2.66668 11.2002 2.66668H10.6667M5.33341 2.66668H10.6667M5.33341 2.66668V1.33334M10.6667 2.66668V1.33334M10.0001 8.00001L7.33341 10.6667L6.00008 9.33334"
+        stroke="white"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
   );
 }
 
 export function TimeIcon() {
   return (
-<svg width="13" height="14" viewBox="0 0 13 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M5.83333 7.83333V5.16667M11.8333 3.16667L10.5 1.83333M4.5 0.5H7.16667M5.83333 13.1667C2.88781 13.1667 0.5 10.7789 0.5 7.83333C0.5 4.88781 2.88781 2.5 5.83333 2.5C8.77885 2.5 11.1667 4.88781 11.1667 7.83333C11.1667 10.7789 8.77885 13.1667 5.83333 13.1667Z" stroke="#0E73F6" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
-
-
+    <svg
+      width="13"
+      height="14"
+      viewBox="0 0 13 14"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M5.83333 7.83333V5.16667M11.8333 3.16667L10.5 1.83333M4.5 0.5H7.16667M5.83333 13.1667C2.88781 13.1667 0.5 10.7789 0.5 7.83333C0.5 4.88781 2.88781 2.5 5.83333 2.5C8.77885 2.5 11.1667 4.88781 11.1667 7.83333C11.1667 10.7789 8.77885 13.1667 5.83333 13.1667Z"
+        stroke="#0E73F6"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
   );
 }
 
 export function ExitIcon() {
   return (
-<svg width="9" height="16" viewBox="0 0 9 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M8 15L1 8L8 1" stroke="#0E73F6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-</svg>
+    <svg
+      width="9"
+      height="16"
+      viewBox="0 0 9 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M8 15L1 8L8 1"
+        stroke="#0E73F6"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+}
 
+export function RetryIcon() {
+  return (
+    <svg
+      width="12"
+      height="12"
+      viewBox="0 0 12 12"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M4.99951 8H2.49951V10.5M6.99951 4H9.49951V1.5M2.29102 4.5017C2.57136 3.80783 3.04073 3.20652 3.64579 2.76611C4.25084 2.32571 4.96794 2.06376 5.71439 2.01025C6.46084 1.95675 7.20688 2.1137 7.86856 2.46331C8.53025 2.81291 9.08013 3.34127 9.45657 3.98806M9.70829 7.49854C9.42794 8.19241 8.95857 8.79372 8.35352 9.23412C7.74846 9.67453 7.03209 9.93614 6.28564 9.98965C5.5392 10.0432 4.79254 9.88623 4.13086 9.53662C3.46918 9.18702 2.91892 8.65876 2.54248 8.01196"
+        stroke="#09090B"
+        stroke-opacity="0.5"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+}
+
+export function DoneIcon() {
+  return (
+    <svg
+      width="10"
+      height="7"
+      viewBox="0 0 10 7"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M0.5 3.32845L3.32843 6.15688L8.98468 0.5"
+        stroke="white"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
+  );
+}
+export function StartIcon() {
+  return (
+    <svg
+      width="16"
+      height="16"
+      viewBox="0 0 16 16"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M4 7.99984L6.82843 10.8283L12.4847 5.17139"
+        stroke="white"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      />
+    </svg>
   );
 }

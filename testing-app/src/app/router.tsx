@@ -7,7 +7,7 @@ import { AppLayout } from "../layout/AppLayout";
 import { NotFound } from "../pages/Errors/NotFound";
 import { AdminLayout } from "../layout/AdminLayout";
 import StudentTestPage from "../pages/student/StudentTestPage";
-import StudentsTest from "../pages/student/StudentsTest";
+import StudentRunTest from "../pages/student/StudentRunTest";
 import { StudentProfilePage } from "../pages/student/StudentProfilePage";
 import { StudentStatsPage } from "../pages/student/StudentStatsPage";
 import QuestionBlock from "../components/tests/QuestionsBlock";
@@ -27,8 +27,9 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <Navigate to={"tests"} /> },
           // {path: 'test', element: <StudentLayout/>},
-          { path: `test/:id`, element: <QuestionBlock /> },
           { path: `tests`, element: <StudentTestPage /> },
+          // { path: `test/:id`, element: <QuestionBlock /> },
+          { path: `test/:id`, element: <StudentRunTest /> },
           { path: `profile`, element: <StudentProfilePage /> },
           { path: `statistics`, element: <StudentStatsPage /> },
         ],

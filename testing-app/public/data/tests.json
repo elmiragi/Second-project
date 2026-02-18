@@ -7,17 +7,17 @@
 "passScore": 70,
 "attemptsAllowed": 3,
 "isPublished": true,
-"tags": ["html", "frontend"]
+"tags": ["ПАЗЛ", "frontend", "2 курс", "Проверка знаний"]
 },
 {
 "id": 2,
 "title": "CSS Базовый",
 "description": "Селекторы и базовые свойства.",
-"durationSec": 900,
+"durationSec": 200,
 "passScore": 80,
 "attemptsAllowed": 2,
 "isPublished": true,
-"tags": ["css", "frontend"]
+"tags": ["КОД", "UX/UI", "3 курс", "Проверка знаний"]
 },
 {
 "id": 3,
@@ -27,6 +27,6 @@
 "passScore": 80,
 "attemptsAllowed": 2,
 "isPublished": true,
-"tags": ["js", "frontend"]
+"tags": ["КОД", "backend", "1 курс", "Проверка знаний"]
 }
 ]
