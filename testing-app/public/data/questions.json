@@ -39,7 +39,8 @@
         "testId": 3,
         "type": "text",
         "text": "Укажите правильный DOCTYPE для HTML5.",
-        "score": 1
+        "score": 1,
+        "correct": "<!DOCTYPE html>"
       },
       {
         "id": 1004,

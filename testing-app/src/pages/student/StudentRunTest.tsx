@@ -1,14 +1,14 @@
-// import { Link } from "react-router-dom";
-// import StudentHeader from "../../components/student/StudentHeader";
 import styled from "@emotion/styled";
 import QuestionBlock from "../../components/tests/QuestionsBlock";
-import { useParams } from "react-router-dom";
+import { useLocation, useParams } from "react-router-dom";
 import { TestHeader } from "../../components/tests/TestHeader";
 import { useEffect, useMemo, useState } from "react";
 import type { Question, TestItem } from "../../components/types/testing";
 import TimerBox from "../../components/tests/Timer";
 import StudentHeader from "../../components/student/StudentHeader";
 import { Loader } from "../../components/UI/Loader";
+import SubBtn from "../../components/tests/SubBtn";
+import { ConfirmModal } from "../../components/tests/ConfirmModal";
 
 const Layout = styled.div`
   display: grid;
@@ -24,9 +24,17 @@ const OptionList = styled.ul`
   list-style: none;
 `;
 
-type AnswerValueType = {
-  value: string | string[] | null;
-};
+// const SubBtn = styled.li`
+//   list-style: none;
+//   display: flex;
+//   justify-content: flex-end;
+//   gap: 10px;
+//   margin: 0 20px 20px;
+//   padding: 10px;
+//   background-color: #f0f0f0;
+// `;
+
+type AnswerValueType = string | string[] | null;
 
 type AnswerValue = {
   type: "multiple" | "single" | "text";
@@ -36,22 +44,25 @@ type AnswerValue = {
 type AnswerState = Record<number, AnswerValue>;
 
 export default function StudentRunTest() {
-  const params = useParams<{ id?: string; testId?: string }>();
   //   const parsed = Number(params.id ?? params.testId);
   //   const testId = Number.isNaN(parsed) ? undefined : parsed;
-  const testId = Number(params.id);
-  const title = testId ? `Тестирование №${testId}` : `Тестирование`;
   const [testData, setTestData] = useState<TestItem | null>(null);
   const [allQuestions, setAllQuestions] = useState<Question[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
-  const durationSeconds = testData?.durationSec;
-  const [seconds, setSeconds] = useState(durationSeconds);
-  const [answer, setAnswer] = useState<AnswerState>({});
+  const location = useLocation();
 
-  //   const location = useLocation();
-  //   console.log(location.state.durationSec);
-  //   const [time, setTime] = useState(durationSeconds);
+  const durationSec = location.state.durationSec ?? testData?.durationSec;
+  const [seconds, setSeconds] = useState(durationSec);
+  const [answer, setAnswer] = useState<AnswerState>({});
+  const [isTestFinished, setIsTestFinished] = useState(false);
+  const [showResult, setShowResult] = useState(false);
+
+  const params = useParams();
+  const testId = Number(params.id);
+  const title = testId ? `Тестирование №${testId}` : `Тестирование`;
+
+  console.log("location", location.state.durationSec);
 
   useEffect(() => {
     const data = "/data/tests.json";
@@ -93,17 +104,6 @@ export default function StudentRunTest() {
     () => allQuestions.filter((q) => q.testId === testId),
     [testId, allQuestions],
   );
-
-  // useEffect(() => {
-  //   setAnswer(prev => {
-  //     if (Object.keys(prev).length > 0) return prev;
-  //     const ansInitial: AnswerState = {};
-  //     for (const q of filteredQuestions) {
-  //       ansInitial[q.id] = { type: q.type, value: q.type === "multiple" ? [] : null, };
-  //     }
-  //     return ansInitial;
-  //   });
-  // }, [filteredQuestions]);
 
   useEffect(() => {
     setAnswer((prev) => {
@@ -173,6 +173,41 @@ export default function StudentRunTest() {
     }));
   }
 
+  const answeredCount = useMemo(() => {
+    return Object.values(answer).filter((a) => {
+      if (a.type === "single") return a.value !== null;
+      if (a.type === "multiple")
+        return Array.isArray(a.value) && a.value.length > 0;
+      if (a.type === "text")
+        return typeof a.value === "string" && a.value.trim() !== "";
+      return false;
+    }).length;
+  }, [answer]);
+
+  const totalCount = filteredQuestions.length;
+  const allAnswer = answeredCount === totalCount;
+
+  function handleSubmit() {
+    const payload = {
+      testId,
+      answer,
+      timeSpent: seconds ?? null,
+    };
+    console.log("payload", payload);
+    setShowResult(true);
+    // console.log("Answer", answeredCount, "/", totalCount);
+    // console.log("allAnswer", allAnswer);
+  }
+
+  function confirmFinished() {
+    setIsTestFinished(false);
+    handleSubmit();
+  }
+
+  const titleTest = allAnswer
+    ? "Вы точно хотите завершить тест?"
+    // : `Не все задания выполнены (${totalCount-answeredCount} пропущено), Вы точно хотите завершить?`;
+    : `Не все задания выполнены (${answeredCount}/${totalCount}), Вы точно хотите завершить?`;
   return (
     <>
       <TestHeader title={title} />
@@ -182,17 +217,27 @@ export default function StudentRunTest() {
             <QuestionBlock
               key={q.id}
               question={q}
-              value={answer}
+              value={answer[q.id]?.value ?? null}
               onChange={onChange}
+              showResult={showResult}
             />
           ))}
         </OptionList>
+
         {seconds && (
           <TimerBox
             duration={seconds}
-            onFinished={() => console.log("Timer finished!")}
+            onFinished={() => console.log("Тест отправлен")}
           />
         )}
+        <SubBtn onClick={() => setIsTestFinished(true)} />
+        <ConfirmModal
+          open={isTestFinished}
+          title={titleTest}
+          confirmLabel="Завершить"
+          onClose={() => setIsTestFinished(false)}
+          onConfirm={() => confirmFinished()}
+        />
       </Layout>
     </>
   );

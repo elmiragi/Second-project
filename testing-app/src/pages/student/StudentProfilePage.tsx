@@ -1,8 +1,8 @@
 import { useRef, useState } from "react";
 import { LinkIcon } from "../../icons/icons";
 import styled from "@emotion/styled";
-import { Modal } from "../../components/modal";
-import { ChangeModalPass } from "../../components/changeModalPass";
+import { Modal } from "../../components/UI/modal";
+import { ChangeModalPass } from "../../components/student/changeModalPass";
 import { Toast } from "../../components/UI/Toast";
 
 const Wrapper = styled.div`
@@ -201,7 +201,7 @@ export function StudentProfilePage() {
             <ChangeModalPass
               onSuccess={() => setIsOpenToast(true)}
               open={isOpenPass}
-              onClose={() => setIsOpenPass(true)}
+              onClose={setIsOpenPass}
             />
             <Toast
               message="Сохранения изменены"
@@ -240,7 +240,7 @@ export function StudentProfilePage() {
           </Modal>
         )} */}
 
-        <ChangeModalPass open={isOpenPass} onClose={setIsOpenPass} />
+        
       </Wrapper>
     </MainProfileBox>
   );

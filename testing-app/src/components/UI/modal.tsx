@@ -1,9 +1,9 @@
 import styled from "@emotion/styled";
-import { useEffect } from "react";
+import { useEffect, useId } from "react";
 
 const Overlay = styled.div`
   position: fixed;
-  inset: 0; /* shorthand for top/right/bottom/left */
+  inset: 0; 
   background-color: rgba(0, 0, 0, 0.4);
   display: flex;
   align-items: center;
@@ -15,6 +15,7 @@ const Overlay = styled.div`
 `;
 
 const MainContainer = styled.div`
+  position: relative;
   background-color: #fff;
   border-radius: 8px;
   padding: 20px;
@@ -22,22 +23,29 @@ const MainContainer = styled.div`
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.04);
   display: flex;
   flex-direction: column;
-  max-width: 450px;
+  max-width: 520px;
   width: 100%;
-  max-height: calc(100vh - 40px); /* keep modal within viewport */
-  overflow: auto; /* scroll inside modal when content is tall */
+  max-height: calc(100vh - 40px);
+  overflow: auto;
   gap: 10px;
   box-sizing: border-box;
-  border: 1px solid #eef0f2;
+  // border: 1px solid #eef0f2;
   min-width: 320px;
 `;
 
 const Header = styled.div`
   display: flex;
-  gap: 16px;
+  justify-content: center;
   align-items: center;
-  justify-content: center; /* center title */
-  position: relative;
+  padding-top: 4px;
+`;
+
+const ModalTitle = styled.h3`
+  margin: 0;
+  font-size: 20px;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.33;
 `;
 
 const Close = styled.button`
@@ -46,70 +54,76 @@ const Close = styled.button`
   top: 12px;
   border: none;
   background: transparent;
-  cursor: pointer;
-  font-size: 14px;
+  font-size: 20px;
   line-height: 1;
+  display: flex;
+  gap: 8px;
+  cursor: pointer;
 `;
 
 const Body = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 12px;
 `;
 
 const Footer = styled.div`
   display: flex;
-  gap: 16px;
+  gap: 12px;
   justify-content: center;
   align-items: center;
 `;
 
-const StyledInput = styled.div`
+const StyledInput = styled.div<{ showBorder?: boolean }>`
   outline: none;
-  border: 1px solid #e5e5e5;
+  border: ${({ showBorder }) => (showBorder ? "none" : "1px solid #e5e5e5")};
   border-radius: 6px;
   padding: 8px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
+  gap: 8px;
+  box-sizing: border-box;
 `;
 
 type TaskModalProps = {
-  title: string;
-  children: React.ReactNode;
-  footer?: React.ReactNode;
   open: boolean;
-  onClose: () => void;
+  title: string;
+  children?: React.ReactNode;
+  footer?: React.ReactNode;
+  onClose: (open?: boolean) => void;
+  showBorder?: boolean;
 };
 
 export function Modal(props: TaskModalProps) {
-  const { open, title, children, footer, onClose } = props;
+  const { open, title, children, footer, onClose, showBorder } = props;
+  const id = useId();
 
   useEffect(() => {
     if (!open) return;
-    const keydwn = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    const keydwn = (e: KeyboardEvent) => e.key === "Escape" && onClose(false);
     window.addEventListener("keydown", keydwn);
     return () => window.removeEventListener("keydown", keydwn);
   }, [open, onClose]);
 
   if (!open) return null;
   return (
-    <Overlay onClick={() => onClose()}>
-      <MainContainer onClick={(e) => e.stopPropagation()}>
+    <Overlay onClick={() => onClose(false)} aria-hidden={!open}>
+      <MainContainer
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={`modal-title-${id}`}
+        onClick={(e) => e.stopPropagation()}
+      >
         <Header>
-          <h2>{title}</h2>
-          <Close onClick={() => onClose()}>
+          <ModalTitle id={`modal-title-${id}`}>{title}</ModalTitle>
+          <Close aria-label="Закрыть" onClick={() => onClose(false)}>
             ×
           </Close>
         </Header>
-        <StyledInput>
-          <Body>{children}</Body>
-          <Close>X</Close>
-          <Footer>{footer}</Footer>
+        <StyledInput showBorder={showBorder}>
+          {children && <Body>{children}</Body>}
+          {footer && <Footer>{footer}</Footer>}
         </StyledInput>
-        {/* <ContainerButton>
-                    <CancelButton onClick={() => }>Отмена</CancelButton>
-                    <SaveButton onClick={() => }>Сохранить</SaveButton>
-                </ContainerButton> */}
       </MainContainer>
     </Overlay>
   );

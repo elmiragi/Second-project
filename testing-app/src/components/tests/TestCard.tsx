@@ -7,6 +7,9 @@ import {
   TimeIcon,
 } from "../../icons/icons";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { Modal } from "../UI/modal";
+import { ConfirmModal } from "./ConfirmModal";
 
 const Card = styled.article`
   border: 1px solid #dde2e4;
@@ -214,6 +217,8 @@ type TestCardProps = {
 export function TestCard(props: TestCardProps) {
   const navigate = useNavigate();
   const { test, lastAttempt } = props;
+  const [isOpenModal, setIsOpenModal] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
 
   // const numbers = useMemo(() => [22,33,44], []);
   //   const res = useMemo{() => {
@@ -265,6 +270,11 @@ export function TestCard(props: TestCardProps) {
     test.deadlineISO || lastAttempt?.finishedAt || null,
   );
   const duration = formatMinutes(test.durationSec || null);
+  // const attemptsUsed = test.attempts ? test.attempts.length : 0;
+  // const attemptsRemaining =
+  //   typeof test.attemptsAllowed === "number"
+  //     ? Math.max(test.attemptsAllowed - attemptsUsed, 0)
+  //     : null;
 
   function actionBtn() {
     if (isGraded && test.allowRetry)
@@ -274,10 +284,37 @@ export function TestCard(props: TestCardProps) {
     return { status: "start", label: "Пройти" };
   }
 
+  const hasTimeLimit = !!test.durationSec && test.durationSec > 0;
+  const oneTestAttempt = test.attemptsAllowed === 1;
+  // const attemptsTest =
+  //   test.attemptsAllowed === 1
+  //     ? "У вас осталось 1 попытка. Будьте осторожны!"
+  //     : "Хотите попробовать ещё раз?";
+
+  function startTest() {
+    setIsOpenModal(false);
+    navigate(`/student/test/${test.id}`, {
+      state: { durationSec: test.durationSec },
+    });
+  }
   function handleClick() {
     if (actionBtn().status === "done") return;
-    if (!test.durationSec) return;
-    navigate(`/student/test/${test.id}`, { state: { durationSec: test.durationSec } });
+
+    if (!hasTimeLimit && !confirmText) {
+      startTest();
+      return;
+    }
+    if (oneTestAttempt) {
+      setConfirmText("У вас осталось 1 попытка. Будьте осторожны!");
+    } else if (hasTimeLimit) {
+      setConfirmText(
+        `У вас есть ограничения по времени (${duration}). Вы уверены, что хотите начать?`,
+      );
+    } else {
+      setConfirmText("Вы уверены, что хотите начать тест?");
+    }
+
+    setIsOpenModal(true);
   }
 
   console.log(actionBtn());
@@ -313,7 +350,7 @@ export function TestCard(props: TestCardProps) {
           </DoneBtn>
         )}
         {actionBtn().status === "retry" && (
-          <RetryBtn>
+          <RetryBtn onClick={() => handleClick()}>
             {actionBtn().label} <RetryIcon />
           </RetryBtn>
         )}
@@ -328,6 +365,15 @@ export function TestCard(props: TestCardProps) {
           <ScoreMax>/10</ScoreMax>
         </ScoreData>
       )}
+
+      <ConfirmModal
+        open={isOpenModal}
+        title={confirmText}
+        confirmLabel="Начать"
+        cancelLabel="Отменить"
+        onClose={() => setIsOpenModal(false)}
+        onConfirm={() => startTest()}
+      />
     </Card>
   );
 }

@@ -24,13 +24,7 @@ const OptionList = styled.ul`
   list-style: none;
 `;
 
-const SubBtn = styled.li`
-  list-style: none;
-  display: flex;
-  justify-content: flex-end;
-  gap: 10px;
-  margin: 0 20px 20px;
-`;
+
 
 export default function StudentsTest() {
   const params = useParams<{ id?: string; testId?: string }>();
@@ -107,26 +101,26 @@ export default function StudentsTest() {
     }));
   }
 
-  function isQuestionAnswered(q: Question) {
-    const value = answers[q.id];
-    if (q.type === "text")
-      return typeof value === "string" && value.trim() !== "";
-    if (q.type === "single") return typeof value === "string" && value !== "";
-    if (q.type === "multiple") return Array.isArray(value) && value.length > 0;
-    return false;
-  }
+//   function isQuestionAnswered(q: Question) {
+//     const value = answers[q.id];
+//     if (q.type === "text")
+//       return typeof value === "string" && value.trim() !== "";
+//     if (q.type === "single") return typeof value === "string" && value !== "";
+//     if (q.type === "multiple") return Array.isArray(value) && value.length > 0;
+//     return false;
+//   }
 
-  const allAnswered = filteredQuestions.every((q) => isQuestionAnswered(q));
+//   const allAnswered = filteredQuestions.every((q) => isQuestionAnswered(q));
 
-  function handleSubmit() {
-    const payload = {
-      testId,
-      answers,
-      time: seconds ?? null,
-    };
-    console.log("Отправка теста", payload);
-    navigate("/student/tests");
-  }
+//   function handleSubmit() {
+//     const payload = {
+//       testId,
+//       answers,
+//       time: seconds ?? null,
+//     };
+//     console.log("Отправка теста", payload);
+//     navigate("/student/tests");
+//   }
 
   if (Number.isNaN(testId)) {
     return (
@@ -176,7 +170,7 @@ export default function StudentsTest() {
               onChange={handleAnswer}
             />
           ))}
-          <SubBtn>
+          {/* <SubBtn>
             <button
               type="button"
               onClick={handleSubmit}
@@ -184,13 +178,13 @@ export default function StudentsTest() {
             >
               Отправить тест
             </button>
-          </SubBtn>
+          </SubBtn> */}
         </OptionList>
-        <div>
+        {/* <div>
           {typeof seconds === "number" && (
             <TimerBox duration={seconds} onFinished={handleSubmit} />
           )}
-        </div>
+        </div> */}
       </Layout>
     </>
   );

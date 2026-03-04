@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import { Modal } from "./modal";
+import { Modal } from "../UI/modal";
 import { useState } from "react";
 
 const ContainerButton = styled.div`
@@ -18,7 +18,7 @@ const CancelButton = styled.button`
   cursor: pointer;
   transition: 0.2s ease;
   &:hover {
-    background: #97b1d8ff;
+    background: #c2c2c2ff;
     color: #fff;
   }
 `;
@@ -81,7 +81,7 @@ const StyledInput = styled.input`
 interface ChangeModalPassProps {
   open: boolean;
   onClose: (v: boolean) => void;
-  onSuccess: (v: boolean) => void;
+  onSuccess?: (v?: boolean) => void;
 }
 export function ChangeModalPass(props: ChangeModalPassProps) {
   const { open, onClose, onSuccess } = props;
@@ -106,7 +106,8 @@ export function ChangeModalPass(props: ChangeModalPassProps) {
     if (!/[0-9]/.test(pw)) error.push("Должна быть хотя бы одна цифра");
     if (!/[@!$%~&^?_-]/.test(pw))
       error.push("Должна быть хотя бы один спецсимвол");
-    if (pass1 === MOCK_USER_PASSWORD) error.push("Пароль совпадают");
+  // do not allow reusing the current password
+  if (pw === MOCK_USER_PASSWORD) error.push("Пароль совпадают");
 
     // const value = pw.trim();
     // const regex = /^(?=.*\p{Lu})(?=.*\d).{8,}$/u;
@@ -132,19 +133,20 @@ export function ChangeModalPass(props: ChangeModalPassProps) {
   const formValid = pass1 !== "" && pass2 !== "" && pwError.length === 0;
   console.log(formValid);
 
-  function mockChangePassword(userId: number, newPw: string) {
+  function mockChangePassword(_userId: number, newPw: string) {
     let promise = new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (newPw.toLowerCase().includes("pass1"))
-          reject(setError("Пароль простой"));
-        else resolve(true);
-      }, 300);
+        setTimeout(() => {
+          if (newPw.toLowerCase().includes("pass1")) {
+            // reject with a message; do not call state setters from here
+            reject("Пароль простой");
+          } else resolve(true);
+        }, 300);
     });
     return promise;
   }
 
   async function onSubmit() {
-    setError(error);
+    setError("");
     if (!formValid) {
       setError(mathError);
       return;
@@ -153,15 +155,18 @@ export function ChangeModalPass(props: ChangeModalPassProps) {
     setTouchedPass1(true);
     setTouchedPass2(true);
 
+    setSubmitting(true);
     try {
       await mockChangePassword(MOCK_USER_ID, pass1);
-      console.log("123");
+      // success: close modal and call optional callback
       onClose(false);
-      onSuccess();
+      onSuccess && onSuccess(true);
       setPass1("");
       setPass2("");
     } catch (error: any) {
-      setError(error);
+      setError(String(error || "Ошибка"));
+    } finally {
+      setSubmitting(false);
     }
     //         await mockChangePassword(pass1);
     //       onClose(false);
@@ -212,9 +217,11 @@ export function ChangeModalPass(props: ChangeModalPassProps) {
         <SaveButton
           variant={formValid ? "primary" : "default"}
           disabled={!formValid}
+          // disabled={!formValid || submitting}
           onClick={() => onSubmit()}
         >
           Подтвердить
+          {/* {submitting ? "Подтверждение..." : "Подтвердить"} */}
         </SaveButton>
       </ContainerButton>
       {touchedPass1 && <pre style={{ color: "red" }}>{pwError.join("\n")}</pre>}
