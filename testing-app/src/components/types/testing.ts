@@ -39,8 +39,23 @@ export type Question = {
   type: QuestionType,
   text: string,
   options?: string[];
-  correct?: string;
+  correct?: string | string[];
   score: number;
   shuffle?: boolean;
 
 }
+export type AnswerValueType = string | string[] | null;
+
+export type AnswerValue = {
+  type: "multiple" | "single" | "text";
+  value: AnswerValueType;
+};
+
+export type AnswerState = Record<number, AnswerValue>;
+
+
+export type CheckResult = {
+  score: number;
+  max: number;
+  status?: "correct" | "warning" | "wrong";
+};

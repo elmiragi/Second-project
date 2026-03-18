@@ -1,10 +1,27 @@
 import styled from "@emotion/styled";
 import { useEffect, useState } from "react";
 
-const Timer = styled.aside<{ danger: boolean }>`
-  background-color: ${(p) => (p.danger ?  "#ffe9e9" : "#fcfeff")};
-  border: 1px solid ${(p) => (p.danger ?  "#ffd7d7" : "#8ecaff")};
-  color: ${(p) => (p.danger ? "#ff0000" : "#1e7eff" )};
+const Timer = styled.aside<{ danger: boolean; finished: boolean }>`
+  background-color: ${(p) => {
+    if (p.finished) return "#fff";
+    return p.danger ? "#ffe9e9" : "#fcfeff";
+  }};
+  border: 1px solid ${(p) => {
+    if (p.finished) return "#e5e7eb";
+    return p.danger ? "#ffb3b3" : "#cfe0ff";
+  }};
+  color: ${(p) => {
+    if (p.finished) return "#babcbd";
+    return p.danger ? "#e00000" : "#1b5de0";
+  }};
+  box-shadow: inset 0 0 20px 0 ${(p) => {
+    if (p.finished) return "#dde2e4";
+    return p.danger ? "#ffb3b3" : "#cfe0ff";
+  }};
+  // box-shadow: inset 0 0 20px 0 #dde2e4;
+  // background: #fff;
+  // color: #dde2e4;
+  // border: 1px solid #dde2e4;
   border-radius: 10px;
   padding: 20px 62px;
   height: 132px;
@@ -25,34 +42,49 @@ const Timer = styled.aside<{ danger: boolean }>`
     line-height: 1;
 `;
 
-type TimerProps = { 
-    duration: number; 
-    onFinished?: () => void 
+type TimerProps = {
+  duration: number;
+  onTick?: (v: number) => void;
+  onFinished?: () => void;
+  finished?: boolean;
+  // setSeconds?: (seconds: number) => void;
 };
 
 export default function TimerBox(props: TimerProps) {
-    const {duration, onFinished} = props;
-  const [time, setTime] = useState<number>(duration || 0);
+  const { duration, onFinished, finished, onTick } = props;
+  const [timeIsOver, setTimeIsOver] = useState<number>(duration || 0);
+  const [time, setTime] = useState(duration)
 
   useEffect(() => {
+    if (finished) return;
     const interval = setInterval(() => {
-      setTime((t) => { 
+      setTime((t) => {
         if (t <= 1) {
-            clearInterval(interval);
-            return 0;
+          clearInterval(interval);
+          return 0;
         }
-        return t - 1;});
+        if (setTime) setTime(t);
+        return t - 1;
+      });
     }, 1000);
     return () => clearInterval(interval);
-  }, []);
+  }, [finished, timeIsOver]);
 
   useEffect(() => {
-    if (!onFinished) return;
-    onFinished()
+    if (finished) return;
+    onTick?.(time);
     // if (time === 0 && typeof onFinished === "function") {
     //   onFinished();
     // }
-  }, [time, onFinished]);
+  }, [finished, time, onTick]);
+
+  useEffect(() => {
+    if (timeIsOver === 0 && onFinished) {
+      onFinished();
+    }
+if (timeIsOver) setTimeIsOver(time);
+    if (setTime) setTime(time);
+  }, [timeIsOver, onFinished]);
 
   function formatedTime(t: number): string {
     const m = Math.floor(t / 60)
@@ -62,11 +94,11 @@ export default function TimerBox(props: TimerProps) {
     return `${m}:${s}`;
   }
 
-  const danger = time <= duration / 4;
+  const danger = timeIsOver <= duration / 4;
   return (
-    <Timer danger={danger}>
+    <Timer danger={danger} finished={finished}>
       <h4 className="timer-title">Осталось времени</h4>
-      <div className="time">{formatedTime(time)}</div>
+      <div className="time">{formatedTime(timeIsOver)}</div>
     </Timer>
   );
 }

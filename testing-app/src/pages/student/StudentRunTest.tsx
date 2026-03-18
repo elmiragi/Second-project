@@ -1,14 +1,21 @@
 import styled from "@emotion/styled";
 import QuestionBlock from "../../components/tests/QuestionsBlock";
-import { useLocation, useParams } from "react-router-dom";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { TestHeader } from "../../components/tests/TestHeader";
-import { useEffect, useMemo, useState } from "react";
-import type { Question, TestItem } from "../../components/types/testing";
+import { Activity, useEffect, useMemo, useState } from "react";
+import type {
+  AnswerState,
+  AnswerValueType,
+  Question,
+  TestItem,
+} from "../../components/types/testing";
 import TimerBox from "../../components/tests/Timer";
 import StudentHeader from "../../components/student/StudentHeader";
 import { Loader } from "../../components/UI/Loader";
 import SubBtn from "../../components/tests/SubBtn";
 import { ConfirmModal } from "../../components/tests/ConfirmModal";
+import { checkQuestion } from "../../helpers/checkQuestions";
+import { ResultScore } from "../../components/tests/ResultScore";
 
 const Layout = styled.div`
   display: grid;
@@ -24,24 +31,11 @@ const OptionList = styled.ul`
   list-style: none;
 `;
 
-// const SubBtn = styled.li`
-//   list-style: none;
-//   display: flex;
-//   justify-content: flex-end;
-//   gap: 10px;
-//   margin: 0 20px 20px;
-//   padding: 10px;
-//   background-color: #f0f0f0;
-// `;
-
-type AnswerValueType = string | string[] | null;
-
-type AnswerValue = {
-  type: "multiple" | "single" | "text";
-  value: AnswerValueType;
-};
-
-type AnswerState = Record<number, AnswerValue>;
+const ContainerBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+`;
 
 export default function StudentRunTest() {
   //   const parsed = Number(params.id ?? params.testId);
@@ -53,7 +47,9 @@ export default function StudentRunTest() {
   const location = useLocation();
 
   const durationSec = location.state.durationSec ?? testData?.durationSec;
+  // const durationSec = location.state.durationSec ?? 600;
   const [seconds, setSeconds] = useState(durationSec);
+  // or time and setTime
   const [answer, setAnswer] = useState<AnswerState>({});
   const [isTestFinished, setIsTestFinished] = useState(false);
   const [showResult, setShowResult] = useState(false);
@@ -61,8 +57,14 @@ export default function StudentRunTest() {
   const params = useParams();
   const testId = Number(params.id);
   const title = testId ? `Тестирование №${testId}` : `Тестирование`;
+  const navigate = useNavigate();
 
   console.log("location", location.state.durationSec);
+
+  useEffect(() => {
+    if (!testData) return;
+    setSeconds(testData?.durationSec);
+  }, [testData]);
 
   useEffect(() => {
     const data = "/data/tests.json";
@@ -75,7 +77,7 @@ export default function StudentRunTest() {
       .then((tests: TestItem[]) => {
         const filteredTests = tests.find((t) => t.id === testId);
         setTestData(filteredTests || null);
-        setSeconds(filteredTests?.durationSec ?? 600);
+        // setSeconds(filteredTests?.durationSec ?? 600);
       })
       .catch((e) => {
         setError(e.message);
@@ -184,17 +186,49 @@ export default function StudentRunTest() {
     }).length;
   }, [answer]);
 
+  const results = useMemo(() => {
+    return filteredQuestions.map((q) => checkQuestion(q, answer[q.id]));
+  }, [answer, filteredQuestions]);
+  console.log("WWWresult", results);
+
   const totalCount = filteredQuestions.length;
   const allAnswer = answeredCount === totalCount;
 
+  const totalScore = results.reduce((sum, res) => sum + (res.max || 0), 0);
+  const userScore = results.reduce((sum, res) => sum + (res.score || 0), 0);
+  console.log("totalScore", totalScore);
+
+  console.log("userScore", userScore);
+  console.log("result", userScore, "/", totalScore);
+
   function handleSubmit() {
-    const payload = {
-      testId,
-      answer,
-      timeSpent: seconds ?? null,
-    };
-    console.log("payload", payload);
+    // const payload = {
+    //   testId,
+    //   answer,
+    //   timeSpent: seconds ?? null,
+    // };
+    // Start new code
+    // let spentSeconds = durationSec - seconds;
+    // console.log("spentSeconds", spentSeconds);
+    // console.log("seconds", seconds);
+    // console.log("durationSec", durationSec);
     setShowResult(true);
+
+    if (testData?.allowRetry && testData.attemptsAllowed > 1) {
+      navigate(`/student/test/${testId}/result`, {
+        replace: true,
+        state: {
+          score: userScore,
+          max: totalScore,
+          attempts: testData.attemptsAllowed - 1,
+          // time: spentSeconds,
+          time: seconds,
+          finished: showResult,
+        },
+      });
+    }
+
+    console.log("Результаты (правильные ответы):", results);
     // console.log("Answer", answeredCount, "/", totalCount);
     // console.log("allAnswer", allAnswer);
   }
@@ -206,8 +240,8 @@ export default function StudentRunTest() {
 
   const titleTest = allAnswer
     ? "Вы точно хотите завершить тест?"
-    // : `Не все задания выполнены (${totalCount-answeredCount} пропущено), Вы точно хотите завершить?`;
-    : `Не все задания выполнены (${answeredCount}/${totalCount}), Вы точно хотите завершить?`;
+    : // : `Не все задания выполнены (${totalCount-answeredCount} пропущено), Вы точно хотите завершить?`;
+      `Не все задания выполнены (${answeredCount}/${totalCount}), Вы точно хотите завершить?`;
   return (
     <>
       <TestHeader title={title} />
@@ -219,18 +253,29 @@ export default function StudentRunTest() {
               question={q}
               value={answer[q.id]?.value ?? null}
               onChange={onChange}
+              result={results[q.id]}
               showResult={showResult}
             />
           ))}
         </OptionList>
+        <ContainerBox>
+          <Activity mode={showResult ? "visible" : "hidden"}>
+            <ResultScore max={totalScore} score={userScore} />
+          </Activity>
+          <Activity mode={seconds ? "visible" : "hidden"}>
+            <TimerBox
+              // duration={seconds}
+              duration={durationSec}
+              onTick={setSeconds}
+              onFinished={() => {
+                if (!showResult) handleSubmit();
+              }}
+              finished={showResult}
+            />
+          </Activity>
+        </ContainerBox>
 
-        {seconds && (
-          <TimerBox
-            duration={seconds}
-            onFinished={() => console.log("Тест отправлен")}
-          />
-        )}
-        <SubBtn onClick={() => setIsTestFinished(true)} />
+        <SubBtn onClick={() => setIsTestFinished(true)} disabled={showResult} />
         <ConfirmModal
           open={isTestFinished}
           title={titleTest}

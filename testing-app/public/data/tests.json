@@ -1,32 +1,57 @@
+
 [
 {
 "id": 1,
-"title": "Основы HTML",
-"description": "Проверка базовых знаний HTML.",
-"durationSec": 600,
+"title": "Тестирование №10",
+"shortDescription": "Описание тестирования длинный текст дадададада…",
+"durationSec": 2000,
 "passScore": 70,
 "attemptsAllowed": 3,
+"allowRetry": true,
 "isPublished": true,
-"tags": ["ПАЗЛ", "frontend", "2 курс", "Проверка знаний"]
+"meta": {
+"project": "ПАЗЛ",
+"track": "Backend",
+"course": "2 курс",
+"purpose": "Проверка знаний"
+},
+"deadlineISO": "2026-10-05T00:00:00Z",
+"tags": ["ПАЗЛ", "Backend", "2 курс"]
 },
 {
 "id": 2,
-"title": "CSS Базовый",
-"description": "Селекторы и базовые свойства.",
-"durationSec": 200,
+"title": "Тестирование №9",
+"shortDescription": "Короткое описание для второго теста…",
+"durationSec": 600,
 "passScore": 80,
-"attemptsAllowed": 2,
+"attemptsAllowed": 1,
+"allowRetry": false,
 "isPublished": true,
-"tags": ["КОД", "UX/UI", "3 курс", "Проверка знаний"]
+"meta": {
+"project": "КОД",
+"track": "Frontend",
+"course": "1 курс",
+"purpose": "Проверка знаний"
+},
+"deadlineISO": null,
+"tags": ["КОД", "Frontend", "1 курс"]
 },
 {
 "id": 3,
-"title": "JS Продвинутый",
-"description": "Javascript.",
-"durationSec": 900,
+"title": "Тестирование №91",
+"shortDescription": "Короткое описание для второго теста…",
+"durationSec": 600,
 "passScore": 80,
-"attemptsAllowed": 2,
+"attemptsAllowed": 3,
+"allowRetry": true,
 "isPublished": true,
-"tags": ["КОД", "backend", "1 курс", "Проверка знаний"]
+"meta": {
+"project": "КОД",
+"track": "Frontend",
+"course": "1 курс",
+"purpose": "Проверка знаний"
+},
+"deadlineISO": null,
+"tags": ["КОД", "Frontend", "1 курс"]
 }
 ]

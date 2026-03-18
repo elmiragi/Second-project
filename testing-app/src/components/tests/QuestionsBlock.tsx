@@ -1,5 +1,5 @@
 import styled from "@emotion/styled";
-import type { Question } from "../types/testing";
+import type { CheckResult, Question } from "../types/testing";
 import { useState } from "react";
 
 // const WrapperQuestions = styled.li`
@@ -68,12 +68,6 @@ const Answerarea = styled.textarea`
   }
 `;
 
-type CheckResult = {
-  max: number;
-  answer: number;
-  status?: "correct" | "warning" | "in_correct";
-};
-
 type QuestionBlockProps = {
   value: string | string[] | null;
   question: Question;
@@ -83,13 +77,13 @@ type QuestionBlockProps = {
 };
 
 export default function QuestionBlock(props: QuestionBlockProps) {
-  const { question, value, onChange, showResult } = props;
+  const { question, value, onChange, showResult, result } = props;
   const { id, options = [], type, text, correct, score, shuffle } = question;
 
-  console.log('score', score)
+  // console.log('score', score)
   function getOptionState(
     option: string,
-  ): "correct" | "warning" | "in_correct" | undefined {
+  ): "correct" | "warning" | "wrong" | undefined {
     if (type === "multiple") {
       // const arr = Array.isArray(value) ? value : [];
       // const cor = Array.isArray(correct) ? correct : [];
@@ -99,7 +93,7 @@ export default function QuestionBlock(props: QuestionBlockProps) {
       if (arr.includes(option) && cor.includes(option)) {
         return "correct";
       } else if (arr.includes(option) && !cor.includes(option)) {
-        return "in_correct";
+        return "wrong";
       } else if (!arr.includes(option) && cor.includes(option)) {
         return "warning";
       }
@@ -113,12 +107,12 @@ export default function QuestionBlock(props: QuestionBlockProps) {
         return "warning";
       }
       if (isSelected && !isCorrect) {
-        return "in_correct";
+        return "wrong";
       }
       return undefined;
     }
   }
-  console.log(getOptionState);
+  // console.log(getOptionState);
 
   return (
     // <OptionList>
@@ -127,6 +121,7 @@ export default function QuestionBlock(props: QuestionBlockProps) {
       <ContainerQuestions>
         <legend>{text}</legend>
       </ContainerQuestions>
+      {/* <div>{showResult && result}</div> */}
 
       {type === "multiple" && (
         <OptionList>
