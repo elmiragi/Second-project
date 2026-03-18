@@ -6,8 +6,8 @@
 "shortDescription": "Описание тестирования длинный текст дадададада…",
 "durationSec": 2000,
 "passScore": 70,
-"attemptsAllowed": 3,
-"allowRetry": true,
+"attemptsAllowed": 1,
+"allowRetry": false,
 "isPublished": true,
 "meta": {
 "project": "ПАЗЛ",
@@ -24,8 +24,8 @@
 "shortDescription": "Короткое описание для второго теста…",
 "durationSec": 600,
 "passScore": 80,
-"attemptsAllowed": 1,
-"allowRetry": false,
+"attemptsAllowed": 2,
+"allowRetry": true,
 "isPublished": true,
 "meta": {
 "project": "КОД",
@@ -33,7 +33,7 @@
 "course": "1 курс",
 "purpose": "Проверка знаний"
 },
-"deadlineISO": null,
+"deadlineISO": "2026-03-24T00:00:00Z",
 "tags": ["КОД", "Frontend", "1 курс"]
 },
 {
@@ -51,7 +51,7 @@
 "course": "1 курс",
 "purpose": "Проверка знаний"
 },
-"deadlineISO": null,
+"deadlineISO": "2026-04-05T00:00:00Z",
 "tags": ["КОД", "Frontend", "1 курс"]
 }
 ]

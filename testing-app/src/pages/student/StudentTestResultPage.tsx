@@ -78,6 +78,7 @@ export function StudentTestResultPage() {
   console.log("locationeee", score, max, attempts, time);
 
   function takeTheTestAgain() {
+    console.log("Navigating back to test with id:", id);
     navigate(`/student/test/${id}`, {
       replace: true,
     });

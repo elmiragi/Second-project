@@ -46,8 +46,8 @@ export default function StudentRunTest() {
   const [error, setError] = useState("");
   const location = useLocation();
 
-  const durationSec = location.state.durationSec ?? testData?.durationSec;
-  // const durationSec = location.state.durationSec ?? 600;
+  // const durationSec = location.state.durationSec ?? testData?.durationSec;
+  const durationSec = testData?.durationSec ?? 600;
   const [seconds, setSeconds] = useState(durationSec);
   // or time and setTime
   const [answer, setAnswer] = useState<AnswerState>({});
@@ -59,7 +59,7 @@ export default function StudentRunTest() {
   const title = testId ? `Тестирование №${testId}` : `Тестирование`;
   const navigate = useNavigate();
 
-  console.log("location", location.state.durationSec);
+  // console.log("location", location.state.durationSec);
 
   useEffect(() => {
     if (!testData) return;

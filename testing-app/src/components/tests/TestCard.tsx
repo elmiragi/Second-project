@@ -266,9 +266,10 @@ export function TestCard(props: TestCardProps) {
   const isGraded = lastAttempt?.status === "graded";
   const scoreText =
     lastAttempt?.status === "graded" ? lastAttempt?.score / 10 : null;
-  const deadline = formateDate(
-    test.deadlineISO || lastAttempt?.finishedAt || null,
-  );
+  // const deadline = formateDate(
+  //   test.deadlineISO || lastAttempt?.finishedAt || null,
+  // );
+   const deadline = formateDate(test.deadlineISO || lastAttempt?.finishedAt);
   const duration = formatMinutes(test.durationSec || null);
   // const attemptsUsed = test.attempts ? test.attempts.length : 0;
   // const attemptsRemaining =
@@ -279,7 +280,10 @@ export function TestCard(props: TestCardProps) {
   function actionBtn() {
     if (isGraded && test.allowRetry)
       return { status: "retry", label: "Пройти заново" };
-    if (isGraded && !test.allowRetry)
+    // Вариант, написанный на уроке
+    // if (isGraded && !test.allowRetry)
+    //   return { status: "done", label: "Выполнено" };
+    if (!isGraded && !test.allowRetry)
       return { status: "done", label: "Выполнено" };
     return { status: "start", label: "Пройти" };
   }

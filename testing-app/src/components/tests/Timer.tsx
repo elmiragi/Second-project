@@ -96,7 +96,7 @@ if (timeIsOver) setTimeIsOver(time);
 
   const danger = timeIsOver <= duration / 4;
   return (
-    <Timer danger={danger} finished={finished}>
+    <Timer danger={danger} finished={finished ?? false}>
       <h4 className="timer-title">Осталось времени</h4>
       <div className="time">{formatedTime(timeIsOver)}</div>
     </Timer>

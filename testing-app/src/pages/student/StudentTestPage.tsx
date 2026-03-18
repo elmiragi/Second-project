@@ -93,7 +93,7 @@ export default function StudentTestPage() {
   const lastAttempByTest = useMemo(() => {
     const unique = new Map();
     const mine = attempts.filter((a) => a.userId === 1);
-    for (const element of mine) unique.set(element.userId, element);
+    for (const element of mine) unique.set(element.testId, element);
     return unique;
   }, [attempts]);
 
