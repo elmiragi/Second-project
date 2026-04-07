@@ -17,6 +17,7 @@ const Card = styled.article`
   padding: 34px 16px 15px 22px;
   position: relative;
   background-color: #fff;
+  min-heighrt: 200px;
 `;
 
 const TitleCard = styled.h4`
@@ -220,12 +221,6 @@ export function TestCard(props: TestCardProps) {
   const [isOpenModal, setIsOpenModal] = useState(false);
   const [confirmText, setConfirmText] = useState("");
 
-  // const numbers = useMemo(() => [22,33,44], []);
-  //   const res = useMemo{() => {
-  //     console.log('count');
-  //     return numbers.reduce((acc, cur) => acc+cur);
-  //   }, [numbers]};
-  //   console.log(res)
   console.log(lastAttempt);
   console.log(test.tags);
 
@@ -265,17 +260,15 @@ export function TestCard(props: TestCardProps) {
 
   const isGraded = lastAttempt?.status === "graded";
   const scoreText =
-    lastAttempt?.status === "graded" ? lastAttempt?.score / 10 : null;
-  // const deadline = formateDate(
-  //   test.deadlineISO || lastAttempt?.finishedAt || null,
-  // );
+    lastAttempt?.status === "graded" ? lastAttempt?.score : null;
+
+  const buttonStatus = actionBtn().status;
+
+  const shouldShowScore = (buttonStatus === "done" || buttonStatus === "retry") && scoreText;
+
    const deadline = formateDate(test.deadlineISO || lastAttempt?.finishedAt);
   const duration = formatMinutes(test.durationSec || null);
-  // const attemptsUsed = test.attempts ? test.attempts.length : 0;
-  // const attemptsRemaining =
-  //   typeof test.attemptsAllowed === "number"
-  //     ? Math.max(test.attemptsAllowed - attemptsUsed, 0)
-  //     : null;
+
 
   function actionBtn() {
     if (isGraded && test.allowRetry)
@@ -290,10 +283,6 @@ export function TestCard(props: TestCardProps) {
 
   const hasTimeLimit = !!test.durationSec && test.durationSec > 0;
   const oneTestAttempt = test.attemptsAllowed === 1;
-  // const attemptsTest =
-  //   test.attemptsAllowed === 1
-  //     ? "У вас осталось 1 попытка. Будьте осторожны!"
-  //     : "Хотите попробовать ещё раз?";
 
   function startTest() {
     setIsOpenModal(false);
@@ -325,7 +314,7 @@ export function TestCard(props: TestCardProps) {
   return (
     <Card>
       <TitleCard>{test.title}</TitleCard>
-      <CardText>{test.description}</CardText>
+      <CardText>{test.shortDescription}</CardText>
 
       <Tags>
         {test.tags?.map((tag, i) => (
@@ -363,10 +352,10 @@ export function TestCard(props: TestCardProps) {
         )}
       </BlockBtn>
 
-      {scoreText && (
+      {shouldShowScore && (
         <ScoreData>
           <Score>{scoreText}</Score>
-          <ScoreMax>/10</ScoreMax>
+          <ScoreMax>/{scoreText}</ScoreMax>
         </ScoreData>
       )}
 
@@ -380,7 +369,4 @@ export function TestCard(props: TestCardProps) {
       />
     </Card>
   );
-}
-{
-  // /* <button onClick={() => setCount(count + 1)}>+++</button> */
 }

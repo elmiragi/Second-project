@@ -4,10 +4,11 @@ import { ProfileIcon, StatsIcon, TestsIcon } from "../icons/icons";
 
 
 const MainBox = styled.div`
-  min-height: 100vh;
+  min-height: 110vh;
   display: grid;
   grid-template-columns: 240px 1fr;
   background: #fff;
+  border-radius: 10px;
 `;
 
 const Aside = styled.aside`

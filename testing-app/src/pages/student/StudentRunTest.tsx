@@ -208,7 +208,7 @@ export default function StudentRunTest() {
     //   timeSpent: seconds ?? null,
     // };
     // Start new code
-    // let spentSeconds = durationSec - seconds;
+    let spentSeconds = durationSec - seconds;
     // console.log("spentSeconds", spentSeconds);
     // console.log("seconds", seconds);
     // console.log("durationSec", durationSec);
@@ -221,16 +221,15 @@ export default function StudentRunTest() {
           score: userScore,
           max: totalScore,
           attempts: testData.attemptsAllowed - 1,
-          // time: spentSeconds,
-          time: seconds,
+          time: spentSeconds,
+          // time: seconds,
           finished: showResult,
         },
       });
     }
 
     console.log("Результаты (правильные ответы):", results);
-    // console.log("Answer", answeredCount, "/", totalCount);
-    // console.log("allAnswer", allAnswer);
+
   }
 
   function confirmFinished() {
@@ -240,7 +239,7 @@ export default function StudentRunTest() {
 
   const titleTest = allAnswer
     ? "Вы точно хотите завершить тест?"
-    : // : `Не все задания выполнены (${totalCount-answeredCount} пропущено), Вы точно хотите завершить?`;
+    : 
       `Не все задания выполнены (${answeredCount}/${totalCount}), Вы точно хотите завершить?`;
   return (
     <>

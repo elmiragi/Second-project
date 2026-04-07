@@ -102,7 +102,7 @@ const Nick = styled.span`
 `;
 
 type StudentHeaderProps = {
-  title: string;
+  title?: string;
   backTo?: string;
 };
 

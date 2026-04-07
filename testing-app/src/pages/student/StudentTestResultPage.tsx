@@ -46,7 +46,6 @@ const AttemptsBox = styled.button`
   min-height: 133px;
   justify-content: center;
   transition: opacity 0.3s;
-
 `;
 const ResultBox = styled.div`
   display: flex;
@@ -54,18 +53,17 @@ const ResultBox = styled.div`
   gap: 20px;
 `;
 
-  const Attempt = styled.h4`
+const Attempt = styled.h4`
   line-height: 1;
   font-size: 66px;
-  font-weight: 700; 
+  font-weight: 700;
   letter-spacing: 0;
-  `;
+`;
 
 export function StudentTestResultPage() {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
-
 
   // console.log("location", location.state);
 
@@ -74,7 +72,7 @@ export function StudentTestResultPage() {
     return null;
   }
 
-  const { score, max, attempts, time, showResult } = location.state;
+  const { score, max, attempts, time } = location.state;
   console.log("locationeee", score, max, attempts, time);
 
   function takeTheTestAgain() {
@@ -82,21 +80,24 @@ export function StudentTestResultPage() {
     navigate(`/student/test/${id}`, {
       replace: true,
     });
-    // return null;
+    return null;
   }
   return (
     <>
       <StudentHeader title={`Тестирование №${id}`} />
       <ResultBox>
         <ResultScore score={score} max={max} />
-        {/* <TimerBox duration={time} onFinished={() => console.log("Test end")} finished={showResult} /> */}
         <TimerBox duration={time} finished />
 
         <Activity mode={attempts === 0 ? "hidden" : "visible"}>
-          <AttemptsBox>Осталось попыток <Attempt>{attempts}</Attempt></AttemptsBox>
+          <AttemptsBox>
+            Осталось попыток <Attempt>{attempts}</Attempt>
+          </AttemptsBox>
         </Activity>
       </ResultBox>
-      <BaseBtn onClick={takeTheTestAgain}>Пройти тест заново</BaseBtn>
+      <Activity mode={attempts !== 0 ? "visible" : "hidden"}>
+        <BaseBtn onClick={takeTheTestAgain}>Пройти тест заново</BaseBtn>
+      </Activity>
     </>
   );
 }

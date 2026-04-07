@@ -1,5 +1,6 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet, Link, useLocation } from "react-router-dom";
 import styled from '@emotion/styled';
+import { StoreProvider } from "../store/storeProvider";
 
 const Layout = styled.div`
   display: flex;
@@ -8,8 +9,7 @@ const Layout = styled.div`
 `;
 
 const Header = styled.header`
-  background-color: #ffffffff;
-  padding: 0px 10px;
+  padding: 5px 10px;
 `;
 
 const Main = styled.main`
@@ -25,30 +25,45 @@ const Nav = styled.nav`
 `;
 
 const NavLink = styled(Link)`
-  background-color: #ffffffff;
-  text-align: center;
-  padding: 0px 10px;
+  background-color: #60aafa;
+  color: white;
+  text-decoration: none;
+  padding: 5px 20px;
+  border-radius: 10px;
+  margin: 0 0.5rem;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: #0056b3;
+  }
 `;
 
 const Footer = styled.footer`
-  background-color: #ffffffff;
+  background-color: #fbfbfb;
   text-align: center;
   padding: 10px;
 `;
 
 export function AppLayout() {
+    const location = useLocation();
+    const isHomePage = location.pathname === "/";
+
     return (
         <>
         <Layout>
-        <Header>
-            <Nav>
-                <NavLink to="/login">Войти</NavLink>
-                <NavLink to="/student">Студент</NavLink>
-                <NavLink to="/admin">Админ</NavLink>
-            </Nav>
-        </Header>
+        {!isHomePage && (
+            <Header>
+                {/* <Nav>
+                    <NavLink to="/login">Войти</NavLink>
+                    <NavLink to="/student">Студент</NavLink>
+                    <NavLink to="/admin">Админ</NavLink>
+                </Nav> */}
+            </Header>
+        )}
         <Main>
+            <StoreProvider>
                 <Outlet/>
+            </StoreProvider>
         </Main>
         <Footer>© 2025</Footer>
         </Layout>

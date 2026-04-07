@@ -18,6 +18,7 @@ export type TestItem = {
     id: number;
     title: string;
     description: string;
+    shortDescription: string;
     passScore: number;
     isPublished: boolean;
     durationSec: number;

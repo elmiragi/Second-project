@@ -178,7 +178,7 @@ export function TestHeader(props: StudentHeaderProps) {
           <Avatar />
           <Info>
             <Name>Эльмира Гильманова</Name>
-            <Nick>@elmira</Nick>
+            <Nick>@elya</Nick>
           </Info>
         </User>
       </Right>

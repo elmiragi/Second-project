@@ -4,6 +4,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { TestCard } from "../../components/tests/TestCard";
 import type { TestItem, Attempt } from "../../components/types/testing";
 import { TestHeader } from "../../components/tests/TestHeader";
+import { useStores } from "../../store/useStore";
+import { observer } from "mobx-react-lite";
+import { StudentTestPageVM } from "../../store/tests/studentTestPageVM";
 
 
 const Upload = styled.div`
@@ -42,61 +45,68 @@ const Cards = styled.div`
 // };
 
 
-export default function StudentTestPage() {
+export const StudentTestPage = observer(() => {
   // const params = useParams();
-
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [tests, setTests] = useState<TestItem[]>([]);
-  const [attempts, setAttempts] = useState<Attempt[]>([]);
-  const [error, setError] = useState<string>("");
+  const root = useStores();
+  const studentTest = useMemo(() => new StudentTestPageVM(root), [root]);
+  const testCatalog = useStores().testCatalogStore;
+  const {init, lastAttemptByTest} = studentTest;
+  const {tests, error, loading: isLoading} = testCatalog;
+  // const [isLoading, setIsLoading] = useState<boolean>(true);
+  // const [tests, setTests] = useState<TestItem[]>([]);
+  // const [attempts, setAttempts] = useState<Attempt[]>([]);
+  // const [error, setError] = useState<string>("");
   
   
   
-  // const [searchOpen, setSearchOpen] = useState<boolean>(false);
-  // const inputRef = useRef<HTMLInputElement | null>(null);
-
-  // useEffect(() => {
-  //   if (searchOpen) inputRef.current?.focus();
-  // }, [searchOpen]);
-
-  
+  const [searchOpen, setSearchOpen] = useState<boolean>(false);
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
-    const testsPath = "/data/tests.json";
-    const attemptsPath = "/data/attempts.json";
-    let ignore = false;
+    if (searchOpen) inputRef.current?.focus();
+  }, [searchOpen]);
 
-    Promise.all([fetch(testsPath), fetch(attemptsPath)])
-      .then(async ([res1, res2]) => {
-        if (ignore) return;
-        if (!res1.ok) throw new Error(`HTTP ${res1.status}`);
-        if (!res2.ok) throw new Error(`HTTP ${res2.status}`);
-        const r: TestItem[] = await res1.json();
-        const a: Attempt[] = await res2.json();
-        if (ignore) return;
-        setTests(r);
-        setAttempts(a);
-      })
-      .catch((err) => {
-        if (ignore) return;
-        setError(err.message || String(err));
-      })
-      .finally(() => {
-        if (!ignore) setIsLoading(false);
-      });
+  
 
-    return () => {
-      ignore = true;
-    };
-  }, []);
+  // useEffect(() => {
+  //   const testsPath = "/data/tests.json";
+  //   const attemptsPath = "/data/attempts.json";
+  //   let ignore = false;
 
-  const lastAttempByTest = useMemo(() => {
-    const unique = new Map();
-    const mine = attempts.filter((a) => a.userId === 1);
-    for (const element of mine) unique.set(element.testId, element);
-    return unique;
-  }, [attempts]);
+  //   Promise.all([fetch(testsPath), fetch(attemptsPath)])
+  //     .then(async ([res1, res2]) => {
+  //       if (ignore) return;
+  //       if (!res1.ok) throw new Error(`HTTP ${res1.status}`);
+  //       if (!res2.ok) throw new Error(`HTTP ${res2.status}`);
+  //       const r: TestItem[] = await res1.json();
+  //       const a: Attempt[] = await res2.json();
+  //       if (ignore) return;
+  //       setTests(r);
+  //       setAttempts(a);
+  //     })
+  //     .catch((err) => {
+  //       if (ignore) return;
+  //       setError(err.message || String(err));
+  //     })
+  //     .finally(() => {
+  //       if (!ignore) setIsLoading(false);
+  //     });
 
+  //   return () => {
+  //     ignore = true;
+  //   };
+  // }, []);
+
+  // const lastAttempByTest = useMemo(() => {
+  //   const unique = new Map();
+  //   const mine = attempts.filter((a) => a.userId === 1);
+  //   for (const element of mine) unique.set(element.testId, element);
+  //   return unique;
+  // }, [attempts]);
+
+  useEffect(() => {
+    init();
+  }, [init]);
 
   if (isLoading) return <Upload className="custom-loader">Загрузка...</Upload>;
   if (error) return <p style={{ color: "red" }}>Ошибка: {error}</p>;
@@ -126,14 +136,10 @@ export default function StudentTestPage() {
             <TestCard
               key={test.id}
               test={test}
-              lastAttempt={lastAttempByTest.get(test.id)}
+              lastAttempt={lastAttemptByTest.get(test.id)}
             />
           ))}
-        {/* <div>
-          <div>Результаты</div>
-          <div>2/5</div>
-        </div> */}
       </Cards>
     </section>
   );
-}
+});

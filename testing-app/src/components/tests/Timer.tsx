@@ -53,6 +53,8 @@ type TimerProps = {
 export default function TimerBox(props: TimerProps) {
   const { duration, onFinished, finished, onTick } = props;
   const [timeIsOver, setTimeIsOver] = useState<number>(duration || 0);
+  // const [timeIsOver, setTimeIsOver] = useState(false);
+
   const [time, setTime] = useState(duration)
 
   useEffect(() => {
@@ -61,6 +63,7 @@ export default function TimerBox(props: TimerProps) {
       setTime((t) => {
         if (t <= 1) {
           clearInterval(interval);
+          // setTimeIsOver(true);
           return 0;
         }
         if (setTime) setTime(t);
@@ -95,9 +98,11 @@ if (timeIsOver) setTimeIsOver(time);
   }
 
   const danger = timeIsOver <= duration / 4;
+
+  const userTime = finished ? "Время решения" : "Осталось времени";
   return (
     <Timer danger={danger} finished={finished ?? false}>
-      <h4 className="timer-title">Осталось времени</h4>
+      <h4 className="timer-title">{userTime}</h4>
       <div className="time">{formatedTime(timeIsOver)}</div>
     </Timer>
   );

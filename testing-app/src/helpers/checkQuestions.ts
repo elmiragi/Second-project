@@ -32,9 +32,6 @@ export function checkQuestion(question: Question, answer: AnswerValue): CheckRes
         const userResponses = Array.isArray(answer.value) ? answer.value : [];
         const correctResponses = Array.isArray(question.correct) ? question.correct : [];
         console.log('userResponses, correctResponses', userResponses, correctResponses)
-        // const correctCount = userResponses.filter(cor => 
-        //     correctResponses.includes(cor)
-        // )
         const correctCount = userResponses.filter(v => correctResponses.includes(v)).length;
         const wrongCount = userResponses.filter(v => !correctResponses.includes(v)).length;
 
@@ -47,7 +44,6 @@ export function checkQuestion(question: Question, answer: AnswerValue): CheckRes
                 status: 'wrong',
             };
         }
-        // if (correctCount === correctResponses.length) {
         if (correctCount > 0) {
             return {
                 max: question.score,

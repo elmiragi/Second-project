@@ -150,10 +150,35 @@ export function StudentProfilePage() {
   const [isOpenPass, setIsOpenPass] = useState(false);
   const [isOpenToast, setIsOpenToast] = useState(true);
 
-  function handleChangeFoto() {
-    console.log("Поменять фото");
-  }
+  // function handleChangeFoto() {
+  //   console.log("Поменять фото");
+  // }
+  function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (file) {
+      if (!file.type.startsWith('image/')) {
+        alert('Пожалуйста, выберите файл изображения');
+        return;
+      }
 
+      if (file.size > 5 * 1024 * 1024) {
+        alert('Файл слишком большой. Максимальный размер: 5MB');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const result = e.target?.result as string;
+        if (result) {
+          SetProfile(prev => ({
+            ...prev,
+            avatar: result
+          }));
+        }
+      };
+      reader.readAsDataURL(file);
+    }
+  }
   function handleChangePassword() {
     console.log("Поменять пароль");
     setIsOpenPass(true);
@@ -195,8 +220,13 @@ export function StudentProfilePage() {
               <StyledButton onClick={() => handleChangePassword()}>
                 Поменять пароль
               </StyledButton>
-              {/* <input ref={fileRef} type="file" style={{ display: "none" }} /> */}
-              {/* <StyledButton>Поменять пароль</StyledButton> */}
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                style={{ display: "none" }}
+                onChange={handleFileChange}
+              />
             </Actions>
             <ChangeModalPass
               onSuccess={() => setIsOpenToast(true)}
@@ -210,36 +240,6 @@ export function StudentProfilePage() {
             />
           </InfoCol>
         </div>
-
-        {/* {isOpenPass && (
-          <Modal
-            onClose={() => setIsOpenPass(false)}
-            open={isOpenPass}
-            title="Сменить пароль"
-          >
-            <div>
-              <label>
-                Новый пароль
-                <StyledInput
-                  type="text"
-                  placeholder="Введите новый пароль..."
-                />
-              </label>
-            </div>
-
-            <div>
-              <label>
-                Повторите пароль
-                <StyledInput type="text" placeholder="Повторите пароль..." />
-              </label>
-            </div>
-            <ContainerButton>
-              <CancelButton>Отменить</CancelButton>
-              <SaveButton>Подтвердить</SaveButton>
-            </ContainerButton>
-          </Modal>
-        )} */}
-
         
       </Wrapper>
     </MainProfileBox>
