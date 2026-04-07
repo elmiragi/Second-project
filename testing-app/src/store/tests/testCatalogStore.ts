@@ -38,34 +38,35 @@ export class TestCatalogStore {
 
 //   }
 
-  load(): void {
+    async load() {
     const tests='/public/data/tests.json';
     const attempts='/public/data/attempts.json';
     this.tests = [];
     this.attempts = [];
-    Promise.all([
+    this.loading = true;
+
+    try {
+    const [testsRes, attemptsRes] =  await Promise.all([
       fetch(tests),
       fetch(attempts)])
-        .then(async ([res1, res2]) => {
-            this.loading = true;
-            if (!res1.ok) throw new Error(`HTTP ${res1.status}`);
-            if (!res2.ok) throw new Error(`HTTP ${res2.status}`);
-            const r = await res1.json();
-            const a = await res2.json();
+        // .then( ([res1, res2]) => {
+            if (!testsRes.ok) throw new Error(`HTTP ${testsRes.status}`);
+            if (!attemptsRes.ok) throw new Error(`HTTP ${attemptsRes.status}`);
+            const r =  await testsRes.json();
+            const a =  await attemptsRes.json();
             runInAction(() => {
-                // if (!Array.isArray(r) && !Array.isArray(a)) {
                 if (!Array.isArray(r) && !Array.isArray(a)) {
                     throw new Error("Некорректные данные");
                 }                
                     this.tests = r;
                     this.attempts = a;
             });
-        })
-        .catch(err => {
-            this.error= err.message;
-            this.loading = false;
-        })
-        .finally(() => (this.loading=false))
+        }catch(error) {
+            this.error = error instanceof Error ? error.message : "Неизвестная ошибка";
+        }finally{
+            this.loading=false}
+    
+        
   }
 get lastAttemptByTest() {
     const unique = new Map();
