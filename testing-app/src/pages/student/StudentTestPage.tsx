@@ -46,63 +46,16 @@ const Cards = styled.div`
 
 
 export const StudentTestPage = observer(() => {
-  // const params = useParams();
   const root = useStores();
   const studentTest = useMemo(() => new StudentTestPageVM(root), [root]);
   const testCatalog = useStores().testCatalogStore;
   const {init, lastAttemptByTest} = studentTest;
-  const {tests, error, loading: isLoading} = testCatalog;
-  // const [isLoading, setIsLoading] = useState<boolean>(true);
-  // const [tests, setTests] = useState<TestItem[]>([]);
-  // const [attempts, setAttempts] = useState<Attempt[]>([]);
-  // const [error, setError] = useState<string>("");
+  const {tests, error, loading: isLoading} = testCatalog;  
   
   
-  
-  const [searchOpen, setSearchOpen] = useState<boolean>(false);
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  // const [searchOpen, setSearchOpen] = useState<boolean>(false);
+  // const inputRef = useRef<HTMLInputElement | null>(null);
 
-  useEffect(() => {
-    if (searchOpen) inputRef.current?.focus();
-  }, [searchOpen]);
-
-  
-
-  // useEffect(() => {
-  //   const testsPath = "/data/tests.json";
-  //   const attemptsPath = "/data/attempts.json";
-  //   let ignore = false;
-
-  //   Promise.all([fetch(testsPath), fetch(attemptsPath)])
-  //     .then(async ([res1, res2]) => {
-  //       if (ignore) return;
-  //       if (!res1.ok) throw new Error(`HTTP ${res1.status}`);
-  //       if (!res2.ok) throw new Error(`HTTP ${res2.status}`);
-  //       const r: TestItem[] = await res1.json();
-  //       const a: Attempt[] = await res2.json();
-  //       if (ignore) return;
-  //       setTests(r);
-  //       setAttempts(a);
-  //     })
-  //     .catch((err) => {
-  //       if (ignore) return;
-  //       setError(err.message || String(err));
-  //     })
-  //     .finally(() => {
-  //       if (!ignore) setIsLoading(false);
-  //     });
-
-  //   return () => {
-  //     ignore = true;
-  //   };
-  // }, []);
-
-  // const lastAttempByTest = useMemo(() => {
-  //   const unique = new Map();
-  //   const mine = attempts.filter((a) => a.userId === 1);
-  //   for (const element of mine) unique.set(element.testId, element);
-  //   return unique;
-  // }, [attempts]);
 
   useEffect(() => {
     init();

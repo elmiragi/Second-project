@@ -150,7 +150,7 @@ export function StudentProfilePage() {
   const [isOpenPass, setIsOpenPass] = useState(false);
   const [isOpenToast, setIsOpenToast] = useState(true);
 
-  // function handleChangeFoto() {
+  // function ChangeFoto() {
   //   console.log("Поменять фото");
   // }
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {

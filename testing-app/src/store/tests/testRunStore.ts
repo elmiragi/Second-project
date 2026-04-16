@@ -54,6 +54,7 @@ export class testRunStore {
     return this.answeredCount === this.totalCount;
   }
   get results(): CheckResult[] {
+    console.log(this.answer);
     return this.allQuestions.map((q) => checkQuestion(q, this.answer[q.id]));
   }
   get totalScore() {
@@ -71,7 +72,8 @@ export class testRunStore {
   setShowResult(value: boolean) {
     this.showResult = value;
   }
-  setAnswer(questionId: number, value: string | string[]) {
+  setAnswer(questionId: number, value: string | string[] | null) {
+    console.log(questionId, value);
     const prev = this.answer[questionId];
     if (!prev) return;
     this.answer = {
@@ -93,14 +95,32 @@ export class testRunStore {
     this.showResult = false;
     this.timeSec = 0;
   }
+
+  // initialAnser() {
+  // const questionId = this.filteredQuestions.filter((q) => q.testId === this.testId);
+  // // const prev = this.answer[questionId];
+  // if (prev === null) return ;
+  //     if (Object.keys(prev).length > 0) return prev;
+  //     const answInitial: AnswerState = {};
+  //     for (const q of this.filteredQuestions) {
+  //       answInitial[q.id] = {
+  //         type: q.type,
+  //         value: q.type === "multiple" ? [] : null,
+  //       };
+  //     }
+  //     return answInitial;
+  //   };
+  // }
+
   async start(testId: number) {
     this.reset();
     this.testId = testId;
   }
   async loadData() {
+    this.reset();
+    this.testId = 1;
     const tests = "/public/data/tests.json";
     const questions = "/public/data/questions.json";
-// 13.5, добавить проверку вопросов
     try {
       const [testsRes, questionsRes] = await Promise.all([
         fetch(tests),
@@ -108,18 +128,33 @@ export class testRunStore {
       ]);
       if (!testsRes.ok) throw new Error(`HTTP ${testsRes.status}`);
       if (!questionsRes.ok) throw new Error(`HTTP ${questionsRes.status}`);
-      const r = await testsRes.json();
+      const t = await testsRes.json();
       const a = await questionsRes.json();
+      const testFound = t.find((t: TestItem) => t.id === this.testId);
+
+      const questionsTest = a.filter((q: Question) => q.testId === this.testId);
+      const answInitial: AnswerState = {};
+
+      for (const q of this.filteredQuestions) {
+        answInitial[q.id] = {
+          type: q.type,
+          value: q.type === "multiple" ? [] : null,
+        };
+      }
+
       runInAction(() => {
-        if (!Array.isArray(r) && !Array.isArray(a)) {
+        if (!Array.isArray(t) && !Array.isArray(a)) {
           throw new Error("Некорректные данные");
         }
-        this.test = r;
-        this.allQuestions = a;
+        this.test = testFound;
+        this.allQuestions = questionsTest;
+        this.timeSec = testFound.durationSec ?? 600;
+        this.answer = answInitial;
       });
     } catch (error) {
       this.error =
         error instanceof Error ? error.message : "Неизвестная ошибка";
+      console.error("Ошибка загрузки данных:", error);
     } finally {
       this.loading = false;
     }

@@ -7,7 +7,7 @@ import { AppLayout } from "../layout/AppLayout";
 import { NotFound } from "../pages/Errors/NotFound";
 import { AdminLayout } from "../layout/AdminLayout";
 // import StudentTestPage from "../pages/student/StudentTestPage";
-import StudentRunTest from "../pages/student/StudentRunTest";
+import {StudentRunTest} from "../pages/student/StudentRunTest";
 import { StudentProfilePage } from "../pages/student/StudentProfilePage";
 import { StudentStatsPage } from "../pages/student/StudentStatsPage";
 import {StudentTestResultPage} from "../pages/student/StudentTestResultPage";

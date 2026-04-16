@@ -1,21 +1,17 @@
 import styled from "@emotion/styled";
 import QuestionBlock from "../../components/tests/QuestionsBlock";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { TestHeader } from "../../components/tests/TestHeader";
-import { Activity, useEffect, useMemo, useState } from "react";
-import type {
-  AnswerState,
-  AnswerValueType,
-  Question,
-  TestItem,
-} from "../../components/types/testing";
+import { Activity, useEffect, useMemo } from "react";
 import TimerBox from "../../components/tests/Timer";
 import StudentHeader from "../../components/student/StudentHeader";
 import { Loader } from "../../components/UI/Loader";
 import SubBtn from "../../components/tests/SubBtn";
 import { ConfirmModal } from "../../components/tests/ConfirmModal";
-import { checkQuestion } from "../../helpers/checkQuestions";
 import { ResultScore } from "../../components/tests/ResultScore";
+import { TestRunPageVM } from "../../store/tests/TestRunPageVM";
+import { useStores } from "../../store/useStore";
+import { observer } from "mobx-react-lite";
 
 const Layout = styled.div`
   display: grid;
@@ -37,89 +33,47 @@ const ContainerBox = styled.div`
   gap: 20px;
 `;
 
-export default function StudentRunTest() {
-  //   const parsed = Number(params.id ?? params.testId);
-  //   const testId = Number.isNaN(parsed) ? undefined : parsed;
-  const [testData, setTestData] = useState<TestItem | null>(null);
-  const [allQuestions, setAllQuestions] = useState<Question[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState("");
-  const location = useLocation();
-
-  // const durationSec = location.state.durationSec ?? testData?.durationSec;
-  const durationSec = testData?.durationSec ?? 600;
-  const [seconds, setSeconds] = useState(durationSec);
-  // or time and setTime
-  const [answer, setAnswer] = useState<AnswerState>({});
-  const [isTestFinished, setIsTestFinished] = useState(false);
-  const [showResult, setShowResult] = useState(false);
-
+export const StudentRunTest = observer(() => {
+  const root = useStores();
+  const studentTest = useMemo(() => new TestRunPageVM(root), [root]);
+  const {
+    init,
+    finishModalText,
+    finishModal,
+    submit,
+    confirmFinish,
+    openFinishModal,
+  } = studentTest;
+  const testRun = useStores().testRunStore;
+  const {
+    results,
+    totalScore,
+    maxScore,
+    loading: isLoading,
+    error,
+    filteredQuestions,
+    answer,
+    showResult,
+    timeSec,
+    setAnswer,
+    durationSec,
+    setTimeLeftSec,
+  } = testRun;
+  // const [testData, setTestData] = useState<TestItem | null>(null);
+  // const [allQuestions, setAllQuestions] = useState<Question[]>([]);
+  // const [isLoading, setIsLoading] = useState(true);
+  // const [error, setError] = useState("");
+  // const location = useLocation();
+  console.log("answer", answer);
   const params = useParams();
   const testId = Number(params.id);
   const title = testId ? `Тестирование №${testId}` : `Тестирование`;
   const navigate = useNavigate();
 
+  useEffect(() => {
+    init();
+  }, [studentTest, testId]);
   // console.log("location", location.state.durationSec);
-
-  useEffect(() => {
-    if (!testData) return;
-    setSeconds(testData?.durationSec);
-  }, [testData]);
-
-  useEffect(() => {
-    const data = "/data/tests.json";
-
-    fetch(data)
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then((tests: TestItem[]) => {
-        const filteredTests = tests.find((t) => t.id === testId);
-        setTestData(filteredTests || null);
-        // setSeconds(filteredTests?.durationSec ?? 600);
-      })
-      .catch((e) => {
-        setError(e.message);
-      });
-  }, [testId]);
-
-  useEffect(() => {
-    const data = "/public/data/questions.json";
-    fetch(data)
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then((data: Question[]) => {
-        if (!Array.isArray(data)) throw new Error("Ошибка с JSON");
-        setAllQuestions(data);
-      })
-      .catch((e) => {
-        setError(e.message);
-      })
-      .finally(() => setIsLoading(false));
-    return () => {};
-  }, [testId]);
-
-  const filteredQuestions = useMemo(
-    () => allQuestions.filter((q) => q.testId === testId),
-    [testId, allQuestions],
-  );
-
-  useEffect(() => {
-    setAnswer((prev) => {
-      if (Object.keys(prev).length > 0) return prev;
-      const answInitial: AnswerState = {};
-      for (const q of filteredQuestions) {
-        answInitial[q.id] = {
-          type: q.type,
-          value: q.type === "multiple" ? [] : null,
-        };
-      }
-      return answInitial;
-    });
-  }, [filteredQuestions]);
 
   if (Number.isNaN(testId)) {
     return (
@@ -156,133 +110,53 @@ export default function StudentRunTest() {
       </section>
     );
 
-  // function onChange(questionId: number, value: AnswerValueType) {
-  //   console.log("onChange", questionId, value);
-  //   setAnswer((prev) => ({
-  //     ...prev,
-  //     [questionId]: { ...prev[questionId], value },
-  //   }));
-  // }
-
-  function onChange(questionId: number, value: AnswerValueType) {
-    console.log("onChange", questionId, value);
-    setAnswer((prev) => ({
-      ...prev,
-      [questionId]: {
-        ...prev[questionId],
-        value,
-      },
-    }));
-  }
-
-  const answeredCount = useMemo(() => {
-    return Object.values(answer).filter((a) => {
-      if (a.type === "single") return a.value !== null;
-      if (a.type === "multiple")
-        return Array.isArray(a.value) && a.value.length > 0;
-      if (a.type === "text")
-        return typeof a.value === "string" && a.value.trim() !== "";
-      return false;
-    }).length;
-  }, [answer]);
-
-  const results = useMemo(() => {
-    return filteredQuestions.map((q) => checkQuestion(q, answer[q.id]));
-  }, [answer, filteredQuestions]);
-  console.log("WWWresult", results);
-
-  const totalCount = filteredQuestions.length;
-  const allAnswer = answeredCount === totalCount;
-
-  const totalScore = results.reduce((sum, res) => sum + (res.max || 0), 0);
-  const userScore = results.reduce((sum, res) => sum + (res.score || 0), 0);
-  console.log("totalScore", totalScore);
-
-  console.log("userScore", userScore);
-  console.log("result", userScore, "/", totalScore);
-
-  function handleSubmit() {
-    // const payload = {
-    //   testId,
-    //   answer,
-    //   timeSpent: seconds ?? null,
-    // };
-    // Start new code
-    let spentSeconds = durationSec - seconds;
-    // console.log("spentSeconds", spentSeconds);
-    // console.log("seconds", seconds);
-    // console.log("durationSec", durationSec);
-    setShowResult(true);
-
-    if (testData?.allowRetry && testData.attemptsAllowed > 1) {
-      navigate(`/student/test/${testId}/result`, {
-        replace: true,
-        state: {
-          score: userScore,
-          max: totalScore,
-          attempts: testData.attemptsAllowed - 1,
-          time: spentSeconds,
-          // time: seconds,
-          finished: showResult,
-        },
-      });
-    }
-
-    console.log("Результаты (правильные ответы):", results);
-
-  }
-
-  function confirmFinished() {
-    setIsTestFinished(false);
-    handleSubmit();
-  }
-
-  const titleTest = allAnswer
-    ? "Вы точно хотите завершить тест?"
-    : 
-      `Не все задания выполнены (${answeredCount}/${totalCount}), Вы точно хотите завершить?`;
   return (
     <>
       <TestHeader title={title} />
       <Layout>
         <OptionList>
-          {filteredQuestions.map((q) => (
-            <QuestionBlock
-              key={q.id}
-              question={q}
-              value={answer[q.id]?.value ?? null}
-              onChange={onChange}
-              result={results[q.id]}
-              showResult={showResult}
-            />
-          ))}
+          {filteredQuestions.map((q) => {
+            // console.log(answer[q.id]?.value);
+            // console.log(answer);
+            // console.log(answer[q.id]);
+            return (
+              <QuestionBlock
+                key={q.id}
+                question={q}
+                value={answer[q.id]?.value ?? null}
+                onChange={setAnswer}
+                result={results[q.id]}
+                showResult={showResult}
+              />
+            );
+          })}
         </OptionList>
         <ContainerBox>
           <Activity mode={showResult ? "visible" : "hidden"}>
-            <ResultScore max={totalScore} score={userScore} />
+            <ResultScore max={maxScore} score={totalScore} />
           </Activity>
-          <Activity mode={seconds ? "visible" : "hidden"}>
+          <Activity mode={timeSec ? "visible" : "hidden"}>
             <TimerBox
               // duration={seconds}
               duration={durationSec}
-              onTick={setSeconds}
+              onTick={setTimeLeftSec}
               onFinished={() => {
-                if (!showResult) handleSubmit();
+                if (!showResult) submit(navigate);
               }}
               finished={showResult}
             />
           </Activity>
         </ContainerBox>
 
-        <SubBtn onClick={() => setIsTestFinished(true)} disabled={showResult} />
+        <SubBtn onClick={() => openFinishModal()} disabled={showResult} />
         <ConfirmModal
-          open={isTestFinished}
-          title={titleTest}
+          open={finishModal}
+          title={finishModalText}
           confirmLabel="Завершить"
-          onClose={() => setIsTestFinished(false)}
-          onConfirm={() => confirmFinished()}
+          onClose={() => openFinishModal()}
+          onConfirm={() => confirmFinish(navigate)}
         />
       </Layout>
     </>
   );
-}
+});
