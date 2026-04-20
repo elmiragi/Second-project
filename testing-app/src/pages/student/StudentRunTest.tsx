@@ -2,7 +2,7 @@ import styled from "@emotion/styled";
 import QuestionBlock from "../../components/tests/QuestionsBlock";
 import { useNavigate, useParams } from "react-router-dom";
 import { TestHeader } from "../../components/tests/TestHeader";
-import { Activity, useEffect, useMemo } from "react";
+import { Activity, useEffect, useMemo, useRef } from "react";
 import TimerBox from "../../components/tests/Timer";
 import StudentHeader from "../../components/student/StudentHeader";
 import { Loader } from "../../components/UI/Loader";
@@ -59,11 +59,15 @@ export const StudentRunTest = observer(() => {
     durationSec,
     setTimeLeftSec,
   } = testRun;
-  // const [testData, setTestData] = useState<TestItem | null>(null);
-  // const [allQuestions, setAllQuestions] = useState<Question[]>([]);
-  // const [isLoading, setIsLoading] = useState(true);
-  // const [error, setError] = useState("");
-  // const location = useLocation();
+
+  // Для возврата к началу страницы при открытии результатов
+  const resultRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (showResult && resultRef.current) {
+      resultRef.current.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }, [showResult]);
+
   console.log("answer", answer);
   const params = useParams();
   const testId = Number(params.id);
@@ -71,9 +75,8 @@ export const StudentRunTest = observer(() => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    init();
+    init(testId);
   }, [studentTest, testId]);
-  // console.log("location", location.state.durationSec);
 
   if (Number.isNaN(testId)) {
     return (
@@ -133,7 +136,9 @@ export const StudentRunTest = observer(() => {
         </OptionList>
         <ContainerBox>
           <Activity mode={showResult ? "visible" : "hidden"}>
-            <ResultScore max={maxScore} score={totalScore} />
+            <div ref={resultRef}>
+              <ResultScore max={maxScore} score={totalScore} />
+            </div>
           </Activity>
           <Activity mode={timeSec ? "visible" : "hidden"}>
             <TimerBox

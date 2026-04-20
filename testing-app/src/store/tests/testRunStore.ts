@@ -77,13 +77,15 @@ export class testRunStore {
     const prev = this.answer[questionId];
     if (!prev) return;
     this.answer = {
-      ...prev,
+      //Здесь исправлено
+      ...this.answer,
       [questionId]: {
         ...prev,
         value,
       },
     };
   }
+
   reset() {
     this.testId = null;
     this.test = null;
@@ -116,9 +118,19 @@ export class testRunStore {
     this.reset();
     this.testId = testId;
   }
-  async loadData() {
+  async loadData(testId?: number) {
     this.reset();
-    this.testId = 1;
+    // this.testId = 1;
+    //TODO: удалить тестовый код и раскомментировать проверку на валидность testId
+    if (typeof testId === "number" && !Number.isNaN(testId)) {
+      this.testId = testId;
+    }
+    if (this.testId === null) {
+      this.error = "Не указан ID теста";
+      this.loading = false;
+      return;
+    }
+    //
     const tests = "/public/data/tests.json";
     const questions = "/public/data/questions.json";
     try {
@@ -135,7 +147,8 @@ export class testRunStore {
       const questionsTest = a.filter((q: Question) => q.testId === this.testId);
       const answInitial: AnswerState = {};
 
-      for (const q of this.filteredQuestions) {
+      //Здесь исправлено
+      for (const q of questionsTest) {
         answInitial[q.id] = {
           type: q.type,
           value: q.type === "multiple" ? [] : null,

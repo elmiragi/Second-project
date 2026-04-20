@@ -26,8 +26,8 @@ export class TestRunPageVM {
     if (this.store.showResult) return;
     this.finishModal = true;
   }
-  init() {
-    this.store.loadData();
+  init(testId?: number) {
+    this.store.loadData(testId);
   }
   confirmFinish(navigate: NavigateFunction) {
     this.closeFinishModal();
@@ -42,17 +42,34 @@ export class TestRunPageVM {
     const spentSeconds = this.store.spentSec;
     this.store.setShowResult(true);
     if (test == null) return;
-    if (test.allowRetry && test.attemptsAllowed > 1) {
-      navigate(`/student/test/${testId}/result`, {
-        replace: true,
-        state: {
-          max: this.store.totalScore,
-          score: this.store.results,
-          attempts: test.attemptsAllowed - 1,
-          time: spentSeconds,
-          finish: this.store.showResult,
-        },
-      });
-    }
+
+    // if (test.allowRetry && test.attemptsAllowed > 1) {
+    //   navigate(`/student/test/${testId}/result`, {
+    //     replace: true,
+    //     state: {
+    //       max: this.store.totalScore,
+    //       score: this.store.results,
+    //       attempts: test.attemptsAllowed - 1,
+    //       time: spentSeconds,
+    //       finish: this.store.showResult,
+    //     },
+    //   });
+    // }
+    // Другой вариант расчета оставшихся попыток, если нужно учитывать уже сделанные попытки
+    const attemptsLeft =
+      test.allowRetry && test.attemptsAllowed > 1
+        ? test.attemptsAllowed - 1
+        : 0;
+
+    navigate(`/student/test/${testId}/result`, {
+      replace: true,
+      state: {
+        max: this.store.maxScore,
+        score: this.store.totalScore,
+        attempts: attemptsLeft,
+        time: spentSeconds,
+        finish: this.store.showResult,
+      },
+    });
   }
 }

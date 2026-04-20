@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import StudentHeader from "../../components/student/StudentHeader";
 import { ResultScore } from "../../components/tests/ResultScore";
@@ -65,7 +66,10 @@ export function StudentTestResultPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // console.log("location", location.state);
+  // Для возврата к началу страницы при открытии результатов
+  useEffect(() => {
+    window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
+  }, []);
 
   if (!location.state) {
     navigate(`/student/tests`, { replace: true });
