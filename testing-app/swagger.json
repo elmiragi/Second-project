@@ -1,0 +1,754 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Testing Platform API (Student)",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/Auth": {
+      "post": {
+        "tags": ["Auth"],
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/AuthRequest" } },
+            "text/json": { "schema": { "$ref": "#/components/schemas/AuthRequest" } },
+            "application/*+json": { "schema": { "$ref": "#/components/schemas/AuthRequest" } }
+          }
+        },
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/Auth/refresh": {
+      "post": {
+        "tags": ["Auth"],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/Auth/logout": {
+      "post": {
+        "tags": ["Auth"],
+        "responses": {
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/Tests/available": {
+      "get": {
+        "tags": ["Tests"],
+        "summary": "Получить список тестов (для студента)",
+        "parameters": [
+          { "name": "isPublic", "in": "query", "description": "Фильтр по публичности теста", "schema": { "type": "boolean" } },
+          { "name": "searchTitle", "in": "query", "description": "Поиск по названию теста", "schema": { "type": "string" } },
+          { "name": "sortBy", "in": "query", "description": "Поле для сортировки (\"Title\" или \"PublishedAt\")", "schema": { "type": "string" } },
+          { "name": "sortDescending", "in": "query", "description": "Направление сортировки (true — по убыванию)", "schema": { "type": "boolean", "default": true } },
+          { "name": "pageNumber", "in": "query", "description": "Номер страницы (начинается с 1)", "schema": { "type": "integer", "format": "int32", "default": 1 } },
+          { "name": "pageSize", "in": "query", "description": "Размер страницы", "schema": { "type": "integer", "format": "int32", "default": 10 } }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/TestResponse" } }
+              },
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/TestResponse" } }
+              },
+              "text/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/TestResponse" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Tests/{id}": {
+      "get": {
+        "tags": ["Tests"],
+        "summary": "Получить тест по id (для студента)",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Идентификатор теста",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/TestResponse" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/TestResponse" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/TestResponse" } }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/Question": {
+      "get": {
+        "tags": ["Question"],
+        "summary": "Получить список вопросов",
+        "parameters": [
+          { "name": "testId", "in": "query", "schema": { "type": "integer", "format": "int32" } }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/QuestionResponse" } }
+              },
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/QuestionResponse" } }
+              },
+              "text/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/QuestionResponse" } }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Question/{id}": {
+      "get": {
+        "tags": ["Question"],
+        "summary": "Получить вопрос по идентификатору",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "Идентификатор вопроса",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/QuestionResponse" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/QuestionResponse" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/QuestionResponse" } }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/Attempts": {
+      "post": {
+        "tags": ["Attempts"],
+        "summary": "Начать попытку",
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/CreateAttemptRequest" } },
+            "text/json": { "schema": { "$ref": "#/components/schemas/CreateAttemptRequest" } },
+            "application/*+json": { "schema": { "$ref": "#/components/schemas/CreateAttemptRequest" } }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "201": { "description": "Created" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Attempts"],
+        "summary": "Закончить попытку",
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/UpdateAttemptRequest" } },
+            "text/json": { "schema": { "$ref": "#/components/schemas/UpdateAttemptRequest" } },
+            "application/*+json": { "schema": { "$ref": "#/components/schemas/UpdateAttemptRequest" } }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "201": { "description": "Created" },
+          "204": { "description": "No Content" },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/Attempts/{attemptId}/review": {
+      "get": {
+        "tags": ["Attempts"],
+        "summary": "Получить разбор попытки",
+        "parameters": [
+          { "name": "attemptId", "in": "path", "required": true, "schema": { "type": "integer", "format": "int32" } }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/AttemptReviewDto" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/AttemptReviewDto" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/AttemptReviewDto" } }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/StudentAnswers": {
+      "post": {
+        "tags": ["StudentAnswers"],
+        "summary": "Дать ответ на вопрос",
+        "requestBody": {
+          "content": {
+            "application/json": { "schema": { "$ref": "#/components/schemas/CreateStudentAnswerRequest" } },
+            "text/json": { "schema": { "$ref": "#/components/schemas/CreateStudentAnswerRequest" } },
+            "application/*+json": { "schema": { "$ref": "#/components/schemas/CreateStudentAnswerRequest" } }
+          }
+        },
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "200": { "description": "OK" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/StudentTests/summary": {
+      "get": {
+        "tags": ["StudentTests"],
+        "summary": "Получить сводку по попыткам всех доступных студенту тестов",
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/StudentTestSummaryDto" } }
+              },
+              "application/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/StudentTestSummaryDto" } }
+              },
+              "text/json": {
+                "schema": { "type": "array", "items": { "$ref": "#/components/schemas/StudentTestSummaryDto" } }
+              }
+            }
+          }
+        }
+      }
+    },
+
+    "/api/TestResults/student": {
+      "get": {
+        "tags": ["TestResults"],
+        "summary": "Получить результаты студента",
+        "description": "После добавления авторизации получение id через параметры будет удалено",
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/TestResultDto" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/TestResultDto" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/TestResultDto" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/TestResults/test/{testId}": {
+      "get": {
+        "tags": ["TestResults"],
+        "summary": "Получить результат теста для текущего студента",
+        "description": "Позволяет получить детальную информацию о результатах прохождения конкретного теста",
+        "parameters": [
+          {
+            "name": "testId",
+            "in": "path",
+            "description": "Идентификатор теста",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/ProblemDetails" } }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": { "schema": { "$ref": "#/components/schemas/TestResultDetailResponse" } },
+              "application/json": { "schema": { "$ref": "#/components/schemas/TestResultDetailResponse" } },
+              "text/json": { "schema": { "$ref": "#/components/schemas/TestResultDetailResponse" } }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AuthRequest": {
+        "required": ["login", "password"],
+        "type": "object",
+        "properties": {
+          "login": { "minLength": 1, "type": "string" },
+          "password": { "minLength": 1, "type": "string" }
+        },
+        "additionalProperties": false
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": {}
+      },
+
+      "CreateAttemptRequest": {
+        "type": "object",
+        "properties": {
+          "testId": { "type": "integer", "description": "Идентификатор теста", "format": "int32" }
+        },
+        "additionalProperties": false,
+        "description": "Модель начала попытки"
+      },
+      "UpdateAttemptRequest": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "description": "Идентфикатор попытки", "format": "int32" }
+        },
+        "additionalProperties": false
+      },
+
+      "AttemptReviewDto": {
+        "type": "object",
+        "properties": {
+          "attemptId": { "type": "integer", "format": "int32" },
+          "testId": { "type": "integer", "format": "int32" },
+          "score": { "type": "integer", "format": "int32" },
+          "maxScore": { "type": "integer", "format": "int32" },
+          "canShowReview": { "type": "boolean" },
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AttemptReviewItemDto" },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "AttemptReviewItemDto": {
+        "type": "object",
+        "properties": {
+          "questionId": { "type": "integer", "format": "int32" },
+          "answerType": { "type": "integer", "format": "int32" },
+          "maxScore": { "type": "integer", "format": "int32" },
+          "earned": { "type": "integer", "format": "int32" },
+          "correctAnswerIds": {
+            "type": "array",
+            "items": { "type": "integer", "format": "int32" },
+            "nullable": true
+          },
+          "selectedAnswerIds": {
+            "type": "array",
+            "items": { "type": "integer", "format": "int32" },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+
+      "CreateStudentAnswerRequest": {
+        "type": "object",
+        "properties": {
+          "attemptId": { "type": "integer", "description": "К какой попытке привязан выбор", "format": "int32" },
+          "questionId": { "type": "integer", "description": "На какой вопрос дан ответ", "format": "int32" },
+          "userSelectedOptions": {
+            "type": "array",
+            "items": { "type": "integer", "format": "int32" },
+            "description": "Какие были выбраны варианты ответов (или один в случае с единичным выбором)",
+            "nullable": true
+          },
+          "userTextAnswers": {
+            "type": "string",
+            "description": "Если вопрос был текстовый, то здесь храним текстовый ответ",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+
+      "AnswerType": {
+        "enum": [1, 2, 3],
+        "type": "integer",
+        "format": "int32"
+      },
+      "AnswerResponseForStudent": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "description": "Идентификатор", "format": "int32" },
+          "text": { "type": "string", "description": "Текст ответа", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "QuestionResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "description": "Идентификатор", "format": "int32" },
+          "text": { "type": "string", "description": "Тест вопроса", "nullable": true },
+          "number": { "type": "integer", "description": "Номер вопроса в тесте", "format": "int32" },
+          "description": { "type": "string", "description": "Описание вопроса", "nullable": true },
+          "answerType": { "$ref": "#/components/schemas/AnswerType" },
+          "isScoring": { "type": "boolean", "description": "Оценивается ли тест" },
+          "maxScore": { "type": "integer", "description": "Сколько баллов можно получить за вопрос", "format": "int32" },
+          "answers": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AnswerResponseForStudent" },
+            "description": "Список ответов",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Вопрос"
+      },
+
+      "StudentTestSummaryDto": {
+        "type": "object",
+        "properties": {
+          "testId": { "type": "integer", "format": "int32" },
+          "maxAttempts": { "type": "integer", "format": "int32", "nullable": true },
+          "attemptsUsed": { "type": "integer", "format": "int32" },
+          "attemptsLeft": { "type": "integer", "format": "int32", "nullable": true },
+          "hasActiveAttempt": { "type": "boolean" },
+          "activeAttemptId": { "type": "integer", "format": "int32", "nullable": true },
+          "hasGradedAttempt": { "type": "boolean" },
+          "bestScore": { "type": "integer", "format": "int32", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+
+      "TestType": {
+        "enum": [1, 2, 3],
+        "type": "integer",
+        "format": "int32"
+      },
+      "TestResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "description": "Идентификатор", "format": "int32" },
+          "title": { "type": "string", "description": "Название", "nullable": true },
+          "description": { "type": "string", "description": "Описание", "nullable": true },
+          "isRepeatable": { "type": "boolean", "description": "Можно ли пройти тест больше одного раза" },
+          "type": { "$ref": "#/components/schemas/TestType" },
+          "isPublic": { "type": "boolean", "description": "Опубликован ли для студентов" },
+          "createdAt": { "type": "string", "description": "Дата создания", "format": "date-time" }
+        },
+        "additionalProperties": false,
+        "description": "Краткая модель теста"
+      },
+
+      "TestResultDto": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "integer", "format": "int32" },
+          "passed": { "type": "boolean" },
+          "testId": { "type": "integer", "format": "int32" },
+          "attemptId": { "type": "integer", "format": "int32" },
+          "bestScore": { "type": "integer", "format": "int32" },
+          "studentId": { "type": "integer", "format": "int32" }
+        },
+        "additionalProperties": false
+      },
+      "TestResultDetailResponse": {
+        "type": "object",
+        "properties": {
+          "testId": { "type": "integer", "description": "Идентификатор теста", "format": "int32" },
+          "hasAnyAttempt": { "type": "boolean", "description": "Есть ли хотя бы одна попытка" },
+          "bestAttemptId": { "type": "integer", "description": "ID лучшей попытки", "format": "int32", "nullable": true },
+          "bestScore": { "type": "integer", "description": "Лучший балл", "format": "int32", "nullable": true },
+          "maxScore": { "type": "integer", "description": "Максимальный балл за тест", "format": "int32" },
+          "passed": { "type": "boolean", "description": "Пройден ли тест" },
+          "attemptsUsed": { "type": "integer", "description": "Использовано попыток", "format": "int32" },
+          "attemptsLeft": { "type": "integer", "description": "Осталось попыток", "format": "int32", "nullable": true },
+          "canShowReview": { "type": "boolean", "description": "Можно ли показывать разбор" }
+        },
+        "additionalProperties": false,
+        "description": "Детальный результат теста для студента"
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "http",
+        "description": "JWT Authorization header using the Bearer scheme.",
+        "scheme": "Bearer"
+      }
+    }
+  },
+  "security": [{ "Bearer": [] }]
+}

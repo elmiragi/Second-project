@@ -23,27 +23,6 @@ const CancelButton = styled.button`
   }
 `;
 
-// const SaveButton = styled.button<{ variant: 'primary' | 'default' }>`
-//   display: flex;
-//   flex: 1 1 calc(50% - 10px);
-//   justify-content: center;
-//   border: 1px solid #e5e5e5;
-//   border-radius: 6px;
-
-//   background: ${({variant}) => (variant === "primary" ? "#4094f7" : "#e5e5e5")};
-//   padding: 8px;
-//   cursor: pointer;
-//   transition: 0.2s ease;
-//   &:hover {
-//     background: ${({variant}) => (variant === "default" ? "#e5e5e5" : "#4094f7")};
-//     color: #fff;
-//   }
-//   &:disabled {
-//     opacity: 0.6;
-//     cursor: not-allowed;
-//   }
-// `;
-
 const SaveButton = styled.button<{ variant: "primary" | "default" }>`
   display: flex;
   flex: 1 1 calc(50% - 10px);
@@ -106,8 +85,7 @@ export function ChangeModalPass(props: ChangeModalPassProps) {
     if (!/[0-9]/.test(pw)) error.push("Должна быть хотя бы одна цифра");
     if (!/[@!$%~&^?_-]/.test(pw))
       error.push("Должна быть хотя бы один спецсимвол");
-  // do not allow reusing the current password
-  if (pw === MOCK_USER_PASSWORD) error.push("Пароль совпадают");
+    if (pw === MOCK_USER_PASSWORD) error.push("Пароль совпадают");
 
     // const value = pw.trim();
     // const regex = /^(?=.*\p{Lu})(?=.*\d).{8,}$/u;
@@ -135,12 +113,11 @@ export function ChangeModalPass(props: ChangeModalPassProps) {
 
   function mockChangePassword(_userId: number, newPw: string) {
     let promise = new Promise((resolve, reject) => {
-        setTimeout(() => {
-          if (newPw.toLowerCase().includes("pass1")) {
-            // reject with a message; do not call state setters from here
-            reject("Пароль простой");
-          } else resolve(true);
-        }, 300);
+      setTimeout(() => {
+        if (newPw.toLowerCase().includes("pass1")) {
+          reject("Пароль простой");
+        } else resolve(true);
+      }, 300);
     });
     return promise;
   }
@@ -158,7 +135,6 @@ export function ChangeModalPass(props: ChangeModalPassProps) {
     setSubmitting(true);
     try {
       await mockChangePassword(MOCK_USER_ID, pass1);
-      // success: close modal and call optional callback
       onClose(false);
       onSuccess && onSuccess(true);
       setPass1("");
@@ -168,16 +144,6 @@ export function ChangeModalPass(props: ChangeModalPassProps) {
     } finally {
       setSubmitting(false);
     }
-    //         await mockChangePassword(pass1);
-    //       onClose(false);
-    //       setPass1("");
-    //       setPass2("");
-    //     } catch (e: any) {
-    //       setError(String(e || "Ошибка"));
-    //     } finally {
-    //       setSubmitting(false);
-    //     }
-    // }
   }
   return (
     <Modal onClose={() => onClose(false)} open={open} title="Сменить пароль">

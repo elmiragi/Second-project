@@ -148,7 +148,11 @@ export default function StudentHeader(props: StudentHeaderProps) {
               onKeyDown={onKeyDown}
             />
           ) : (
-            <SearchButton aria-label="Поиск" title="Открыть поиск" onClick={() => setSearchOpen(true)}>
+            <SearchButton
+              aria-label="Поиск"
+              title="Открыть поиск"
+              onClick={() => setSearchOpen(true)}
+            >
               <SearchIcon />
             </SearchButton>
           ))}
@@ -157,7 +161,7 @@ export default function StudentHeader(props: StudentHeaderProps) {
           <Avatar />
           <Info>
             <Name>Студент</Name>
-            <Nick>@elmira</Nick>
+            <Nick>@elya</Nick>
           </Info>
         </User>
       </Right>

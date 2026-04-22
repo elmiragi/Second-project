@@ -13,7 +13,9 @@ const Wrapper = styled.div`
 
 const LinkRow = styled.a`
   display: flex;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
   align-items: center;
   text-decoration: none;
   font-size: 14px;
@@ -148,21 +150,18 @@ export function StudentProfilePage() {
   const [profile, SetProfile] = useState<ProfileData>(data);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const [isOpenPass, setIsOpenPass] = useState(false);
-  const [isOpenToast, setIsOpenToast] = useState(true);
+  const [isOpenToast, setIsOpenToast] = useState(false);
 
-  // function ChangeFoto() {
-  //   console.log("Поменять фото");
-  // }
   function handleFileChange(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (file) {
-      if (!file.type.startsWith('image/')) {
-        alert('Пожалуйста, выберите файл изображения');
+      if (!file.type.startsWith("image/")) {
+        alert("Пожалуйста, выберите файл изображения");
         return;
       }
 
       if (file.size > 5 * 1024 * 1024) {
-        alert('Файл слишком большой. Максимальный размер: 5MB');
+        alert("Файл слишком большой. Максимальный размер: 5MB");
         return;
       }
 
@@ -170,15 +169,16 @@ export function StudentProfilePage() {
       reader.onload = (e) => {
         const result = e.target?.result as string;
         if (result) {
-          SetProfile(prev => ({
+          SetProfile((prev) => ({
             ...prev,
-            avatar: result
+            avatar: result,
           }));
         }
       };
       reader.readAsDataURL(file);
     }
   }
+
   function handleChangePassword() {
     console.log("Поменять пароль");
     setIsOpenPass(true);
@@ -234,13 +234,12 @@ export function StudentProfilePage() {
               onClose={setIsOpenPass}
             />
             <Toast
-              message="Сохранения изменены"
+              message="Изменения сохранены"
               open={isOpenToast}
               onClose={() => setIsOpenToast(false)}
             />
           </InfoCol>
         </div>
-        
       </Wrapper>
     </MainProfileBox>
   );

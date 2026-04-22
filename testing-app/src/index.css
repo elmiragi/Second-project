@@ -19,7 +19,7 @@ footer{
   font-weight: 700;
 }
 
-.custom-loader {
+/* .custom-loader {
   width:50px;
   height:50px;
   --c:radial-gradient(farthest-side,#766DF4 92%,#0000);
@@ -32,4 +32,17 @@ footer{
   background-repeat:no-repeat;
   animation:s7 1s infinite;
 }
-@keyframes s7 {to{transform: rotate(.5turn)}}
+@keyframes s7 {to{transform: rotate(.5turn)}} */
+.custom-loader {
+  width: 45px;
+  height: 45px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #766DF4; /* Твой основной цвет */
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}

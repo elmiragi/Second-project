@@ -1,11 +1,13 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { observer } from "mobx-react-lite";
+import styled from "@emotion/styled";
+
 import StudentHeader from "../../components/student/StudentHeader";
 import { ResultScore } from "../../components/tests/ResultScore";
-// import Timer from "../../components/tests/Timer";
-import styled from "@emotion/styled";
-import { Activity } from "react";
 import TimerBox from "../../components/tests/Timer";
+import { StudentTestResultPageVM } from "../../store/tests/StudentTestResultPageVM";
+import { useStores } from "../../store/useStore";
 
 const BaseBtn = styled.button`
   display: flex;
@@ -22,7 +24,6 @@ const BaseBtn = styled.button`
   justify-content: center;
   padding: 7px 20px;
   margin-top: 10px;
-  border-radius: 5px;
   transition: opacity 0.3s;
 
   &:hover {
@@ -31,7 +32,8 @@ const BaseBtn = styled.button`
     opacity: 0.9;
   }
 `;
-const AttemptsBox = styled.button`
+
+const AttemptsBox = styled.div`
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -42,12 +44,11 @@ const AttemptsBox = styled.button`
   border: 1px solid #dde2e4;
   border-radius: 10px;
   font-weight: 400;
-  cursor: pointer;
   min-width: 260px;
   min-height: 133px;
   justify-content: center;
-  transition: opacity 0.3s;
 `;
+
 const ResultBox = styled.div`
   display: flex;
   flex-direction: row;
@@ -58,50 +59,50 @@ const Attempt = styled.h4`
   line-height: 1;
   font-size: 66px;
   font-weight: 700;
-  letter-spacing: 0;
+  color: #babcbd;
 `;
 
-export function StudentTestResultPage() {
+export const StudentTestResultPage = observer(() => {
   const { id } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const rootStore = useStores();
 
-  // Для возврата к началу страницы при открытии результатов
+  const vm = useMemo(() => new StudentTestResultPageVM(rootStore), [rootStore]);
+
+  useEffect(() => {
+    vm.init(id, location.state as any);
+  }, [vm, id, location.state]);
+
+  useEffect(() => {
+    vm.redirectMainState(navigate);
+  }, [vm, navigate]);
+
   useEffect(() => {
     window.scrollTo({ top: 0, left: 0, behavior: "smooth" });
   }, []);
 
-  if (!location.state) {
-    navigate(`/student/tests`, { replace: true });
-    return null;
-  }
+  if (!vm.flagState) return null;
 
-  const { score, max, attempts, time } = location.state;
-  console.log("locationeee", score, max, attempts, time);
-
-  function takeTheTestAgain() {
-    console.log("Navigating back to test with id:", id);
-    navigate(`/student/test/${id}`, {
-      replace: true,
-    });
-    return null;
-  }
   return (
     <>
-      <StudentHeader title={`Тестирование №${id}`} />
+      <StudentHeader title={`Тестирование №${vm.testId}`} />
       <ResultBox>
-        <ResultScore score={score} max={max} />
-        <TimerBox duration={time} finished />
+        <ResultScore score={vm.score ?? 0} max={vm.max ?? 0} />
+        <TimerBox duration={vm.time ?? 0} finished />
 
-        <Activity mode={attempts === 0 ? "hidden" : "visible"}>
+        {vm.showAttempts && (
           <AttemptsBox>
-            Осталось попыток <Attempt>{attempts}</Attempt>
+            Осталось попыток <Attempt>{vm.attempts}</Attempt>
           </AttemptsBox>
-        </Activity>
+        )}
       </ResultBox>
-      <Activity mode={attempts !== 0 ? "visible" : "hidden"}>
-        <BaseBtn onClick={takeTheTestAgain}>Пройти тест заново</BaseBtn>
-      </Activity>
+
+      {vm.goRetry && (
+        <BaseBtn onClick={() => vm.goRetry(navigate)}>
+          Пройти тест заново
+        </BaseBtn>
+      )}
     </>
   );
-}
+});

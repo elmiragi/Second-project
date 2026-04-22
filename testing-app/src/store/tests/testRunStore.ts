@@ -98,22 +98,6 @@ export class testRunStore {
     this.timeSec = 0;
   }
 
-  // initialAnser() {
-  // const questionId = this.filteredQuestions.filter((q) => q.testId === this.testId);
-  // // const prev = this.answer[questionId];
-  // if (prev === null) return ;
-  //     if (Object.keys(prev).length > 0) return prev;
-  //     const answInitial: AnswerState = {};
-  //     for (const q of this.filteredQuestions) {
-  //       answInitial[q.id] = {
-  //         type: q.type,
-  //         value: q.type === "multiple" ? [] : null,
-  //       };
-  //     }
-  //     return answInitial;
-  //   };
-  // }
-
   async start(testId: number) {
     this.reset();
     this.testId = testId;

@@ -1,6 +1,7 @@
 import { Outlet, Link, useLocation } from "react-router-dom";
-import styled from '@emotion/styled';
+import styled from "@emotion/styled";
 import { StoreProvider } from "../store/storeProvider";
+import { ModalHost } from "../components/UI/ModalHost";
 
 const Layout = styled.div`
   display: flex;
@@ -45,28 +46,32 @@ const Footer = styled.footer`
 `;
 
 export function AppLayout() {
-    const location = useLocation();
-    const isHomePage = location.pathname === "/";
+  const location = useLocation();
+  const isHomePage = location.pathname === "/";
 
-    return (
-        <>
-        <Layout>
+  return (
+    <>
+      <Layout>
         {!isHomePage && (
-            <Header>
-                {/* <Nav>
+          <Header>
+            {/* <Nav>
                     <NavLink to="/login">Войти</NavLink>
                     <NavLink to="/student">Студент</NavLink>
                     <NavLink to="/admin">Админ</NavLink>
                 </Nav> */}
-            </Header>
+          </Header>
         )}
         <Main>
-            <StoreProvider>
-                <Outlet/>
-            </StoreProvider>
+          {/* <StoreProvider>
+            <Outlet />
+          </StoreProvider> */}
+          <StoreProvider>
+            <Outlet />
+            <ModalHost />
+          </StoreProvider>
         </Main>
-        <Footer>© 2025</Footer>
-        </Layout>
-        </>
-    )
+        <Footer>© 2026</Footer>
+      </Layout>
+    </>
+  );
 }

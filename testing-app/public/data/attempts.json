@@ -7,7 +7,7 @@
 "finishedAt": "2025-10-01T14:35:00Z",
 "timeSpent": 600,
 "score": 5,
-"status": "graded"
+"status": "submitted"
 },
 {
 "id": 5002,
@@ -16,12 +16,22 @@
 "startedAt": "2025-10-01T14:11:11Z",
 "finishedAt": "2025-12-01T14:44:44Z",
 "timeSpent": 900,
-"score": 9,
+"score": 6,
 "status": "graded"
 },
 {
 "id": 5003,
 "testId": 3,
+"userId": 1,
+"startedAt": "2025-10-01T14:55:55Z",
+"finishedAt": "2025-12-01T14:55:59Z",
+"timeSpent": 1200,
+"score": 5,
+"status": "submitted"
+},
+{
+"id": 5004,
+"testId": 4,
 "userId": 1,
 "startedAt": "2025-10-01T14:55:55Z",
 "finishedAt": "2025-12-01T14:55:59Z",

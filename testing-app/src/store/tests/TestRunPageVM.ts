@@ -3,7 +3,6 @@ import type { RootStore } from "../rootStore";
 import type { NavigateFunction } from "react-router-dom";
 
 export class TestRunPageVM {
-  finishModal: boolean = false;
   rootStore: RootStore;
   constructor(rootStore: RootStore | null) {
     makeAutoObservable(this, {}, { autoBind: true });
@@ -13,24 +12,40 @@ export class TestRunPageVM {
   get store() {
     return this.rootStore.testRunStore;
   }
+
+  get modalStore() {
+    return this.rootStore.modalStore;
+  }
   get finishModalText(): string {
     return this.store.allAnswered
       ? "Вы точно хотите завершить тест?"
       : `Не все задания выполнены (${this.store.answeredCount}/${this.store.totalCount}), Вы точно хотите завершить?`;
   }
 
-  closeFinishModal() {
-    this.finishModal = false;
-  }
-  openFinishModal() {
-    if (this.store.showResult) return;
-    this.finishModal = true;
-  }
+  // closeFinishModal() {
+  //   this.finishModal = false;
+  // }
+  // openFinishModal() {
+  //   if (this.store.showResult) return;
+  //   this.finishModal = true;
+  // }
   init(testId?: number) {
     this.store.loadData(testId);
   }
+
+  requestFinish(navigate: NavigateFunction) {
+    if (this.store.showResult) return;
+
+    this.modalStore.openConfirm({
+      title: this.finishModalText,
+      confirmLabel: "Завершить",
+      cancelLabel: "Продолжить",
+      onConfirm: () => this.confirmFinish(navigate),
+    });
+  }
+
   confirmFinish(navigate: NavigateFunction) {
-    this.closeFinishModal();
+    // this.closeFinishModal();
     this.submit(navigate);
   }
   timerFinish(navigate: NavigateFunction) {
@@ -43,23 +58,12 @@ export class TestRunPageVM {
     this.store.setShowResult(true);
     if (test == null) return;
 
-    // if (test.allowRetry && test.attemptsAllowed > 1) {
-    //   navigate(`/student/test/${testId}/result`, {
-    //     replace: true,
-    //     state: {
-    //       max: this.store.totalScore,
-    //       score: this.store.results,
-    //       attempts: test.attemptsAllowed - 1,
-    //       time: spentSeconds,
-    //       finish: this.store.showResult,
-    //     },
-    //   });
-    // }
-    // Другой вариант расчета оставшихся попыток, если нужно учитывать уже сделанные попытки
+    if (!test.allowRetry) {
+      return;
+    }
+
     const attemptsLeft =
-      test.allowRetry && test.attemptsAllowed > 1
-        ? test.attemptsAllowed - 1
-        : 0;
+      test.attemptsAllowed > 1 ? test.attemptsAllowed - 1 : 0;
 
     navigate(`/student/test/${testId}/result`, {
       replace: true,

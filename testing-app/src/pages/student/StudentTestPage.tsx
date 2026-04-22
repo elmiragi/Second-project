@@ -8,14 +8,22 @@ import { useStores } from "../../store/useStore";
 import { observer } from "mobx-react-lite";
 import { StudentTestPageVM } from "../../store/tests/studentTestPageVM";
 
+// const Upload = styled.div`
+//   display: flex;
+//   align-items: center;
+//   justify-content: center;
+//   min-height: 60vh;
+//   font-size: 16px;
+//   color: #0f172a;
+// `;
 
 const Upload = styled.div`
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   min-height: 60vh;
-  font-size: 16px;
-  color: #0f172a;
+  gap: 15px;
 `;
 
 const Cards = styled.div`
@@ -26,36 +34,15 @@ const Cards = styled.div`
   align-items: start;
 `;
 
-
-// type Attempt = {
-//   id: number;
-//   testId: number;
-//   userId: number;
-//   score: number;
-//   status: "submitted" | "graded" | "in_progress";
-// };
-
-// type TestItem = {
-//   id: number;
-//   title: string;
-//   description: string;
-//   attempts: Attempt[];
-//   repeatsAllowed: boolean;
-//   passingScore: number;
-// };
-
-
 export const StudentTestPage = observer(() => {
   const root = useStores();
   const studentTest = useMemo(() => new StudentTestPageVM(root), [root]);
   const testCatalog = useStores().testCatalogStore;
-  const {init, lastAttemptByTest} = studentTest;
-  const {tests, error, loading: isLoading} = testCatalog;  
-  
-  
+  const { init, lastAttemptByTest } = studentTest;
+  const { tests, error, loading: isLoading } = testCatalog;
+
   // const [searchOpen, setSearchOpen] = useState<boolean>(false);
   // const inputRef = useRef<HTMLInputElement | null>(null);
-
 
   useEffect(() => {
     init();
@@ -68,30 +55,16 @@ export const StudentTestPage = observer(() => {
 
   return (
     <section>
-      {/* <QuestionsContainer>
-        <TextBlock>
-          <h2>Список тестов</h2>
-        </TextBlock>
+      <TestHeader title="Список тестов" />
 
-        {tests.map((t: any) => (
-          <OptionCard key={t.id}>
-            <QuestionNumber>{t.title ?? `Тест ${t.id}`}</QuestionNumber>
-            <TestCard testItem={t} />
-
-        
-          </OptionCard>
-        ))}
-      </QuestionsContainer> */}
-      <TestHeader title="Список тестов"/>
-      
       <Cards>
-          {tests.map((test) => (
-            <TestCard
-              key={test.id}
-              test={test}
-              lastAttempt={lastAttemptByTest.get(test.id)}
-            />
-          ))}
+        {tests.map((test) => (
+          <TestCard
+            key={test.id}
+            test={test}
+            lastAttempt={lastAttemptByTest.get(test.id)}
+          />
+        ))}
       </Cards>
     </section>
   );

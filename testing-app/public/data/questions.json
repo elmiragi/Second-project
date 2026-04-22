@@ -149,6 +149,41 @@
           "%"
         ],
         "score": 3
+      },
+      {
+        "id": 2001,
+        "testId": 4,
+        "type": "single",
+        "text": "Какое свойство задаёт цвет текста?",
+        "options": [
+          "background",
+          "color",
+          "fill",
+          "font-color"
+        ],
+        "correct": "color",
+        "score": 1
+      },
+      {
+        "id": 2002,
+        "testId": 4,
+        "type": "multiple",
+        "text": "Какие значения допустимы для display?",
+        "options": [
+          "block",
+          "inline",
+          "grid",
+          "flex",
+          "center"
+        ],
+        "correct": [
+          "block",
+          "inline",
+          "grid",
+          "flex"
+        ],
+        "score": 4,
+        "shuffle": true
       }
     ]
 

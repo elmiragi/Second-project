@@ -7,7 +7,7 @@ import TimerBox from "../../components/tests/Timer";
 import StudentHeader from "../../components/student/StudentHeader";
 import { Loader } from "../../components/UI/Loader";
 import SubBtn from "../../components/tests/SubBtn";
-import { ConfirmModal } from "../../components/tests/ConfirmModal";
+// import { ConfirmModal } from "../../components/tests/ConfirmModal";
 import { ResultScore } from "../../components/tests/ResultScore";
 import { TestRunPageVM } from "../../store/tests/TestRunPageVM";
 import { useStores } from "../../store/useStore";
@@ -33,17 +33,34 @@ const ContainerBox = styled.div`
   gap: 20px;
 `;
 
+const ButtonContainer = styled.div`
+  display: flex;
+  gap: 10px;
+  flex-direction: column;
+`;
+
+const BackBtn = styled.button`
+  background-color: #fff;
+  color: #09090b;
+  border: 1px solid #dde2e4;
+  padding: 10px 20px;
+  margin-top: 0;
+  border-radius: 5px;
+  font-weight: 400;
+  cursor: pointer;
+  min-width: 150px;
+  transition: all 0.2s;
+
+  &:hover {
+    background-color: #f5f5f5;
+    border-color: #bbb;
+  }
+`;
+
 export const StudentRunTest = observer(() => {
   const root = useStores();
   const studentTest = useMemo(() => new TestRunPageVM(root), [root]);
-  const {
-    init,
-    finishModalText,
-    finishModal,
-    submit,
-    confirmFinish,
-    openFinishModal,
-  } = studentTest;
+  const { init, requestFinish, submit } = studentTest;
   const testRun = useStores().testRunStore;
   const {
     results,
@@ -58,6 +75,7 @@ export const StudentRunTest = observer(() => {
     setAnswer,
     durationSec,
     setTimeLeftSec,
+    spentSec,
   } = testRun;
 
   // Для возврата к началу страницы при открытии результатов
@@ -119,9 +137,6 @@ export const StudentRunTest = observer(() => {
       <Layout>
         <OptionList>
           {filteredQuestions.map((q) => {
-            // console.log(answer[q.id]?.value);
-            // console.log(answer);
-            // console.log(answer[q.id]);
             return (
               <QuestionBlock
                 key={q.id}
@@ -142,8 +157,9 @@ export const StudentRunTest = observer(() => {
           </Activity>
           <Activity mode={timeSec ? "visible" : "hidden"}>
             <TimerBox
-              // duration={seconds}
-              duration={durationSec}
+              // Когда showResult изменится с false на true, React пересоздаст компонент и примет новое значение duration.
+              key={showResult ? "spent" : "running"}
+              duration={showResult ? durationSec - timeSec : durationSec}
               onTick={setTimeLeftSec}
               onFinished={() => {
                 if (!showResult) submit(navigate);
@@ -151,16 +167,39 @@ export const StudentRunTest = observer(() => {
               finished={showResult}
             />
           </Activity>
+          {/* <Activity mode={timeSec ? "visible" : "hidden"}>
+            <TimerBox
+              // duration={seconds}
+              duration={durationSec - timeSec}
+              onTick={setTimeLeftSec}
+              onFinished={() => {
+                if (!showResult) submit(navigate);
+              }}
+              finished={showResult}
+            />
+          </Activity> */}
         </ContainerBox>
 
-        <SubBtn onClick={() => openFinishModal()} disabled={showResult} />
-        <ConfirmModal
+        <SubBtn onClick={() => requestFinish(navigate)} disabled={showResult} />
+        {showResult && (
+          <ButtonContainer>
+            <BackBtn
+              onClick={() => {
+                navigate("/student/tests");
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+            >
+              Вернуться к тестам
+            </BackBtn>
+          </ButtonContainer>
+        )}
+        {/* <ConfirmModal
           open={finishModal}
           title={finishModalText}
           confirmLabel="Завершить"
-          onClose={() => openFinishModal()}
+          onClose={() => closeFinishModal()}
           onConfirm={() => confirmFinish(navigate)}
-        />
+        /> */}
       </Layout>
     </>
   );

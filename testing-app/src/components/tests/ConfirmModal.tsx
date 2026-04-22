@@ -1,5 +1,4 @@
 import styled from "@emotion/styled";
-import { useState } from "react";
 import { Modal } from "../UI/modal";
 
 const Actions = styled.div`
@@ -10,46 +9,6 @@ const Actions = styled.div`
   border: none;
   width: 100%;
 `;
-
-const Title = styled.h2`
-display: flex;
-justify-content: center;
-align-items: center;
-text-align: center;
-min-width: 380px;
-`;
-// const CancelButton = styled.button`
-//   display: flex;
-//   flex: 1 1 calc(50% - 10px);
-//   justify-content: center;
-//   border: 1px solid #e5e5e5;
-//   border-radius: 6px;
-//   background: #fff;
-//   padding: 8px;
-//   cursor: pointer;
-//   transition: 0.2s ease;
-//   &:hover {
-//     background: #a7c3eeff;
-//     color: #fff;
-//   }
-// `;
-
-// const SendButton = styled.button`
-//   display: flex;
-//   flex: 1 1 calc(50% - 10px);
-//   justify-content: center;
-//   border: 1px solid #1b72e4ff;
-//   border-radius: 6px;
-//   background-color: #0e73f6;
-//   color: #fff;
-//   padding: 8px;
-//   cursor: pointer;
-//   transition: 0.2s ease;
-//   &:hover {
-//     background: #1b72e4ff;
-//     color: #fff;
-//   }
-// `;
 
 const CancelButton = styled.button`
   border: 1px solid #e5e5e5;
@@ -112,7 +71,9 @@ export function ConfirmModal(props: ConfirmModalProps) {
       showBorder={true}
       footer={
         <Actions>
-          <CancelButton onClick={() => onClose(false)}>{cancelLabel}</CancelButton>
+          <CancelButton onClick={() => onClose(false)}>
+            {cancelLabel}
+          </CancelButton>
           <SaveButton variant="primary" onClick={() => onConfirm()}>
             {confirmLabel}
           </SaveButton>

@@ -20,7 +20,22 @@ const OptionList = styled.ul`
   list-style: none;
 `;
 
-const OptionLabel = styled.label`
+const ResultInfo = styled.div`
+  padding: 12px;
+  background: #f5f5f5;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #09090b;
+  margin-top: 12px;
+`;
+
+const ScoreBadge = styled.span`
+  font-weight: 600;
+  color: #0e73f6;
+  margin-right: 8px;
+`;
+
+const OptionLabel = styled.label<{ $state?: "correct" | "warning" | "wrong" }>`
   display: flex;
   gap: 10px;
   align-items: center;
@@ -28,6 +43,34 @@ const OptionLabel = styled.label`
   background: #fff;
   border-radius: 8px;
   padding: 10px;
+  border: 2px solid transparent;
+  input {
+    accent-color: #0e73f6; /* Тот самый синий цвет из вашего ScoreBadge */
+  }
+
+  ${(p) =>
+    p.$state === "correct" &&
+    `
+    background: #e8f7f1;
+    border-color: #1ec47d;
+  `}
+  ${(p) =>
+    p.$state === "wrong" &&
+    `
+    background: #fde8e8;
+    border-color: #ff4444;
+  `}
+  ${(p) =>
+    p.$state === "warning" &&
+    `
+    background: #fff4e6;
+    border-color: #ffa528;
+  `}
+
+  input:disabled {
+    cursor: not-allowed;
+    opacity: 0.8;
+  }
 `;
 
 const QuestionCard = styled.li`
@@ -52,7 +95,7 @@ const ContainerQuestions = styled.div`
   letter-spacing: -2.2%;
 `;
 
-const Answerarea = styled.textarea`
+const AnswerArea = styled.textarea`
   width: 100%;
   min-height: 70px;
   padding: 12px;
@@ -66,6 +109,11 @@ const Answerarea = styled.textarea`
     border: 1px solid #fafafa;
     box-shadow: 0 0 0 3px rgba(14, 115, 246, 0.08);
   }
+  &:disabled {
+    background: #f5f5f5;
+    cursor: not-allowed;
+    opacity: 0.8;
+  }
 `;
 
 type QuestionBlockProps = {
@@ -78,15 +126,13 @@ type QuestionBlockProps = {
 
 export default function QuestionBlock(props: QuestionBlockProps) {
   const { question, value, onChange, showResult, result } = props;
-  const { id, options = [], type, text, correct, score, shuffle } = question;
+  const { id, options = [], type, text, correct } = question;
 
   // console.log('score', score)
   function getOptionState(
     option: string,
   ): "correct" | "warning" | "wrong" | undefined {
     if (type === "multiple") {
-      // const arr = Array.isArray(value) ? value : [];
-      // const cor = Array.isArray(correct) ? correct : [];
       const arr: string[] = Array.isArray(value) ? value : [];
       const cor: string[] = Array.isArray(correct) ? correct : [];
 
@@ -100,6 +146,9 @@ export default function QuestionBlock(props: QuestionBlockProps) {
     } else if (type === "single") {
       const isSelected = value === option;
       const isCorrect = option === correct;
+      console.log("option", option);
+      console.log("value", value);
+      console.log("isCorrect", isCorrect);
       if (isSelected && isCorrect) {
         return "correct";
       }
@@ -112,8 +161,6 @@ export default function QuestionBlock(props: QuestionBlockProps) {
       return undefined;
     }
   }
-  // console.log(getOptionState);
-
   return (
     // <OptionList>
     //   {questions.map(q => (
@@ -128,16 +175,19 @@ export default function QuestionBlock(props: QuestionBlockProps) {
           {options.map((option: string, i: number) => {
             const arr = Array.isArray(value) ? value : [];
             const checked = arr.includes(option);
+            const optionState = showResult ? getOptionState(option) : undefined;
 
             return (
               <div key={i}>
-                <OptionLabel htmlFor={`q-${id}-${i}`}>
+                <OptionLabel htmlFor={`q-${id}-${i}`} $state={optionState}>
                   <input
                     id={`q-${id}-${i}`}
                     type="checkbox"
                     value={option}
                     checked={checked}
+                    disabled={showResult}
                     onChange={() => {
+                      if (showResult) return;
                       getOptionState(option);
                       const next = checked
                         ? arr.filter((ch) => ch !== option)
@@ -155,39 +205,64 @@ export default function QuestionBlock(props: QuestionBlockProps) {
 
       {type === "single" && (
         <OptionList>
-          {options.map((option: string, i: number) => (
-            <li key={i}>
-              <OptionLabel htmlFor={`q-${id}-${i}`}>
-                <input
-                  id={`q-${id}-${i}`}
-                  type="radio"
-                  name={`q-${id}`}
-                  aria-label={`Option ${i} q-${id}`}
-                  checked={value === option}
-                  onChange={() => onChange(id, option)}
-                />
-                <span>{option}</span>
-              </OptionLabel>
-            </li>
-          ))}
+          {options.map((option: string, i: number) => {
+            const optionState = showResult ? getOptionState(option) : undefined;
+
+            return (
+              <li key={i}>
+                <OptionLabel htmlFor={`q-${id}-${i}`} $state={optionState}>
+                  <input
+                    id={`q-${id}-${i}`}
+                    type="radio"
+                    name={`q-${id}`}
+                    aria-label={`Option ${i} q-${id}`}
+                    checked={value === option}
+                    disabled={showResult}
+                    onChange={() => {
+                      if (showResult) return;
+                      onChange(id, option);
+                    }}
+                  />
+                  <span>{option}</span>
+                </OptionLabel>
+              </li>
+            );
+          })}
         </OptionList>
       )}
 
       {type === "text" && (
         <OptionList>
           <OptionLabel htmlFor={`q-${id}`}>
-            <Answerarea
+            <AnswerArea
               name={`q-${id}`}
               aria-label={`Ответ на вопрос ${id}`}
               placeholder="Введите свой ответ..."
               value={typeof value === "string" ? value : ""}
-              onChange={(e) => onChange(id, e.target.value)}
+              disabled={showResult}
+              onChange={(e) => {
+                if (showResult) return;
+                onChange(id, e.target.value);
+              }}
             />
           </OptionLabel>
         </OptionList>
       )}
+      {/* Добавлен абсолютно новый блок!!! */}
+      {showResult && result && (
+        <ResultInfo>
+          <ScoreBadge>
+            Баллы: {result.score}/{result.max}
+          </ScoreBadge>
+          {/* {result.status === "correct" && <span>Правильно</span>}
+          {result.status === "wrong" && (
+            <span>Неправильно. Правильный ответ: {String(correct)}</span>
+          )}
+          {result.status === "warning" && (
+            <span>Неответлено. Правильный ответ: {String(correct)}</span>
+          )} */}
+        </ResultInfo>
+      )}
     </QuestionCard>
-
-    // </OptionList>
   );
 }

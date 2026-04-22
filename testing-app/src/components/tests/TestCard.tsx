@@ -121,48 +121,6 @@ const ScoreMax = styled.span`
   color: #0e73f6;
 `;
 
-// const RetryBtn = styled.button`
-//   color: #fff;
-//   line=hight: 1.71;
-//   font-size: 14px;
-//   font-weight: 600;
-//   padding: 7 px 20px;
-//   min-width: 122px;
-//   border-radius: 10px;
-//   cursor: pointer;
-
-//   background: #0e73f6;
-//   border: 1px solid #0e73f6;
-// `;
-
-// const DoneBtn = styled.button`
-//   color: #fff;
-//   line=hight: 1.71;
-//   font-size: 14px;
-//   font-weight: 600;
-//   padding: 7 px 20px;
-//   min-width: 122px;
-//   border-radius: 10px;
-//   cursor: pointer;
-
-//   background: #0e73f6;
-//   border: 1px solid #0e73f6;
-// `;
-
-// const StartBtn = styled.button`
-//   color: #fff;
-//   line=hight: 1.71;
-//   font-size: 14px;
-//   font-weight: 600;
-//   padding: 7 px 20px;
-//   min-width: 122px;
-//   border-radius: 10px;
-//   cursor: pointer;
-
-//   background: #0e73f6;
-//   border: 1px solid #0e73f6;
-// `;
-
 const BlockBtn = styled.span`
   display: flex;
   justify-content: flex-end;
@@ -229,11 +187,6 @@ export function TestCard(props: TestCardProps) {
     const d = new Date(date);
     return d.toLocaleDateString("ru-RU");
   }
-  // function formateMinutes(seconds?: number | null): string | null {
-  //   if (!seconds) return null;
-  //   const m = Math.round(seconds / 60);
-  //   return `${m} минут`;
-  // }
 
   function formatMinutes(seconds?: number | null): string | null {
     if (!seconds) return null;
@@ -261,22 +214,22 @@ export function TestCard(props: TestCardProps) {
   const isGraded = lastAttempt?.status === "graded";
   const scoreText =
     lastAttempt?.status === "graded" ? lastAttempt?.score : null;
+  // console.log("lastAttempt", lastAttempt?.status);
+  // console.log("lastAttempt_score", lastAttempt?.score);
 
   const buttonStatus = actionBtn().status;
+  // console.log("buttonStatus", buttonStatus);
 
-  const shouldShowScore = (buttonStatus === "done" || buttonStatus === "retry") && scoreText;
+  const shouldShowScore =
+    (buttonStatus === "done" || buttonStatus === "retry") && scoreText;
 
-   const deadline = formateDate(test.deadlineISO || lastAttempt?.finishedAt);
+  const deadline = formateDate(test.deadlineISO || lastAttempt?.finishedAt);
   const duration = formatMinutes(test.durationSec || null);
-
 
   function actionBtn() {
     if (isGraded && test.allowRetry)
       return { status: "retry", label: "Пройти заново" };
-    // Вариант, написанный на уроке
-    // if (isGraded && !test.allowRetry)
-    //   return { status: "done", label: "Выполнено" };
-    if (!isGraded && !test.allowRetry)
+    if (isGraded && !test.allowRetry)
       return { status: "done", label: "Выполнено" };
     return { status: "start", label: "Пройти" };
   }
@@ -355,7 +308,7 @@ export function TestCard(props: TestCardProps) {
       {shouldShowScore && (
         <ScoreData>
           <Score>{scoreText}</Score>
-          <ScoreMax>/{scoreText}</ScoreMax>
+          <ScoreMax>/{test.passScore}</ScoreMax>
         </ScoreData>
       )}
 

@@ -18,10 +18,6 @@ const Timer = styled.aside<{ danger: boolean; finished: boolean }>`
     if (p.finished) return "#dde2e4";
     return p.danger ? "#ffb3b3" : "#cfe0ff";
   }};
-  // box-shadow: inset 0 0 20px 0 #dde2e4;
-  // background: #fff;
-  // color: #dde2e4;
-  // border: 1px solid #dde2e4;
   border-radius: 10px;
   padding: 20px 62px;
   height: 132px;
@@ -47,15 +43,13 @@ type TimerProps = {
   onTick?: (v: number) => void;
   onFinished?: () => void;
   finished?: boolean;
-  // setSeconds?: (seconds: number) => void;
 };
 
 export default function TimerBox(props: TimerProps) {
   const { duration, onFinished, finished, onTick } = props;
   const [timeIsOver, setTimeIsOver] = useState<number>(duration || 0);
-  // const [timeIsOver, setTimeIsOver] = useState(false);
 
-  const [time, setTime] = useState(duration)
+  const [time, setTime] = useState(duration);
 
   useEffect(() => {
     if (finished) return;
@@ -63,7 +57,6 @@ export default function TimerBox(props: TimerProps) {
       setTime((t) => {
         if (t <= 1) {
           clearInterval(interval);
-          // setTimeIsOver(true);
           return 0;
         }
         if (setTime) setTime(t);
@@ -76,16 +69,13 @@ export default function TimerBox(props: TimerProps) {
   useEffect(() => {
     if (finished) return;
     onTick?.(time);
-    // if (time === 0 && typeof onFinished === "function") {
-    //   onFinished();
-    // }
   }, [finished, time, onTick]);
 
   useEffect(() => {
     if (timeIsOver === 0 && onFinished) {
       onFinished();
     }
-if (timeIsOver) setTimeIsOver(time);
+    if (timeIsOver) setTimeIsOver(time);
     if (setTime) setTime(time);
   }, [timeIsOver, onFinished]);
 
